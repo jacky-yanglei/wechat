@@ -881,7 +881,7 @@ export default {
 
             if (this.users[personIndex].money < parseFloat(this.setAssetsPrice) * parseFloat(this.setStockCount)) {
                 let finish = false;
-                await this.$confirm(`现金不足，最多可买入金额：${this.currentMoney(this.currentPerson)}，是否将当前的现金全部买入?', '提示`, {
+                await this.$confirm(`现金不足，最多可买入金额：${this.currentMoney(this.currentPerson)}，是否将当前的现金全部买入?`, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -1324,7 +1324,19 @@ export default {
     .el-dialog__title {
         font-weight: bold;
     }
+    
 }
 </style>
+<style lang="less">
+.el-message-box__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.el-message-box {
+    max-width: 100%;
+}
+</style>
+
 
 
