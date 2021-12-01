@@ -176,40 +176,55 @@
                 <div>
                     当前价格: {{ currentAssetsPrice }}
                 </div>
-                <div>
+                <div v-if="exchangeType === -1">
+                    <div>快捷卖出</div>
+                    <div class="quik">
+                        <div @click="setQuikType(0.25)" :class="quikType === 0.25 ? 'active': ''">卖1/4</div>
+                        <div @click="setQuikType(0.5)" :class="quikType === 0.5 ? 'active': ''">卖1/2</div>
+                        <div @click="setQuikType(0.75)" :class="quikType === 0.75 ? 'active': ''">卖3/4</div>
+                        <div @click="setQuikType(1)" :class="quikType === 1 ? 'active': ''">全卖</div>
+                    </div>
+                </div>
+                <div v-if="exchangeType === -1">
                     <div>{{ exchangeType === 1?'买入':'卖出' }}数量</div>
                     <div>
                         <el-input type="number" @input="changeCount" v-model="setStockCount" placeholder=""></el-input>
                     </div>
                 </div>
                 <div v-if="exchangeType === -1">
-                    最大卖出数量: {{ maxSellCount(currentPerson, setAssetsValue) }}
+                    最大卖出数量: {{ format(maxSellCount(currentPerson, setAssetsValue)) }}
+                </div>
+                <!-- <div v-if="exchangeType === 1">
+                    最大可买数量: {{ setAssetsPrice && setAssetsPrice > 0 ? format(currentMoney(currentPerson)/setAssetsPrice) : '--' }}
+                </div> -->
+                <div v-if="exchangeType === 1">
+                    可用金额: {{ format(currentMoney(currentPerson)) }}
                 </div>
                 <div v-if="exchangeType === 1">
-                    最大可买数量: {{ setAssetsPrice && setAssetsPrice > 0 ? format(currentMoney(currentPerson)/setAssetsPrice) : '--' }}
-                </div>
-                <div>
-                    <div>总金额(万元)</div>
+                    <div>买入金额(万元)</div>
                     <div>
                         <el-input type="number" @input="changeMoney" v-model="setStockMoney" placeholder=""></el-input>
                     </div>
                 </div>
                 <div v-if="exchangeType === 1">
-                    可用金额: {{ format(currentMoney(currentPerson)) }}
-                </div>
-                <div>
                     <div>快捷买入</div>
                     <div class="quik">
-                        <div @click="setQuikType(0.25)" :class="quikType === 0.25 ? 'active': ''">25%</div>
-                        <div @click="setQuikType(0.5)" :class="quikType === 0.5 ? 'active': ''">50%</div>
-                        <div @click="setQuikType(0.75)" :class="quikType === 0.75 ? 'active': ''">75%</div>
-                        <div @click="setQuikType(1)" :class="quikType === 1 ? 'active': ''">100%</div>
+                        <div @click="setQuikType(0.25)" :class="quikType === 0.25 ? 'active': ''">买1/4</div>
+                        <div @click="setQuikType(0.5)" :class="quikType === 0.5 ? 'active': ''">买1/2</div>
+                        <div @click="setQuikType(0.75)" :class="quikType === 0.75 ? 'active': ''">买3/4</div>
+                        <div @click="setQuikType(1)" :class="quikType === 1 ? 'active': ''">全买</div>
                     </div>
                 </div>
+                <div v-if="exchangeType === 1">
+                    预计可得数量: {{ format(setStockCount) || '--' }}
+                </div>
+                <!-- <div v-if="exchangeType === -1">
+                    预计可得金额: {{ setStockMoney ? filterMoneyFixed(setStockMoney) + '元' : '--' }}
+                </div> -->
                 
                 <div class="buy-btn">
                     <el-button type="primary" class="buy" v-if="exchangeType === 1" @click="buy" round>买入</el-button>
-                    <el-button type="primary" class="sell" v-if="exchangeType === -1" @click="sell" round>卖出</el-button>
+                    <el-button type="primary" class="sell" v-if="exchangeType === -1" @click="sell" round>卖出{{ setStockMoney !== '' ? '可得' + (filterMoneyFixed(setStockMoney*10000)) + '元' : '' }}</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -598,9 +613,9 @@ export default {
               }
               if (money >= 10000) {
                   let num = money/10000;
-                  return _this.format(Math.round(num * 100) / 100) + '万';
+                  return _this.format(Math.floor(num * 100) / 100) + '万';
               }
-              return _this.format(Math.round(money * 100) / 100);
+              return _this.format(Math.floor(money * 100) / 100);
           }
       },
       format() {
@@ -695,7 +710,7 @@ export default {
         },
 
         back() {
-             this.$confirm('您确定要撤回到上一次操作?', '提示', {
+             this.$confirm('您确定要撤销本次操作?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -1196,14 +1211,16 @@ export default {
     .quik {
         display: flex;
         margin-top: 10px;
+        justify-content: space-between;
         > div {
             cursor: pointer;
-            flex: 0 0 25%;
+            flex: 0 0 23%;
             text-align: center;
-            height: 30px;
-            line-height: 30px;
+            height: 40px;
+            line-height: 40px;
             border: 1px solid transparent;
             border-radius: 20px;
+            border: 1px solid #546C95;
             &.active {
                 color: white;
                 background-color: #3030E0;
@@ -1222,13 +1239,14 @@ export default {
             line-height: 40px;
             color: white;
             opacity: 0.5;
+            background-color: rgba(84,108,149, 0.5);
             &.active {
                 opacity: 1;
             }
-            &:first-child {
+            &:first-child.active {
                 background-color: #17D2A5;
             }
-            &:last-child {
+            &:last-child.active {
                 background-color: #DD643E;
             }
         }
@@ -1339,6 +1357,11 @@ export default {
 }
 .el-message-box {
     max-width: 100%;
+}
+.el-scrollbar {
+    > .el-scrollbar__bar {
+        opacity: 1 !important;
+    }
 }
 </style>
 
