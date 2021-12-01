@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div>
-                    <div>金额</div>
+                    <div>金额(万元)</div>
                     <div>
                         <el-input type="number" v-model="setMoneyValue" placeholder="请输入内容"></el-input>
                     </div>
@@ -189,7 +189,7 @@
                     最大可买数量: {{ setAssetsPrice && setAssetsPrice > 0 ? format(currentMoney(currentPerson)/setAssetsPrice) : '--' }}
                 </div>
                 <div>
-                    <div>总金额</div>
+                    <div>总金额(万元)</div>
                     <div>
                         <el-input type="number" @input="changeMoney" v-model="setStockMoney" placeholder=""></el-input>
                     </div>
@@ -235,7 +235,7 @@
                         <div>{{ item.name }}</div>
                         <div>{{ format(getStockPrice(item.name)) }}</div>
                         <div>{{ format(item.count) }}</div>
-                        <div>{{ format(assetsToMoney([item])) }}</div>
+                        <div>{{ filterMoneyFixed(assetsToMoney([item])) }}</div>
                     </div>
                 </div>
                 <div v-if="currentHouse(currentPerson).length > 0">
@@ -250,7 +250,7 @@
                         <div>{{ item.name }}</div>
                         <div>{{ format(getStockPrice(item.name)) }}</div>
                         <div>{{ format(item.count) }}</div>
-                        <div>{{ format(assetsToMoney([item])) }}</div>
+                        <div>{{ filterMoneyFixed(assetsToMoney([item])) }}</div>
                     </div>
                 </div>
                 <div v-if="currentCompany(currentPerson).length > 0">
@@ -265,7 +265,7 @@
                         <div>{{ item.name }}</div>
                         <div>{{ format(getStockPrice(item.name)) }}</div>
                         <div>{{ format(item.count) }}</div>
-                        <div>{{ format(assetsToMoney([item])) }}</div>
+                        <div>{{ filterMoneyFixed(assetsToMoney([item])) }}</div>
                     </div>
                 </div>
             </div>
@@ -553,7 +553,7 @@ export default {
                       count = assets[i].count;
                   }
               }
-              return count;
+              return Math.floor(count * 100) / 100;
           }
       },
       // 资产转钱
@@ -586,7 +586,8 @@ export default {
               if (isNaN(parseFloat(money))) {
                   return '--';
               }
-              return _this.format(money/10000) + '万';
+              let num = money/10000;
+              return _this.format(Math.round(num * 100) / 100) + '万';
           }
       },
       filterMoneyFixed() {
@@ -596,9 +597,10 @@ export default {
                   return '--';
               }
               if (money >= 10000) {
-                  return _this.format(money/10000) + '万';
+                  let num = money/10000;
+                  return _this.format(Math.round(num * 100) / 100) + '万';
               }
-              return _this.format(money);
+              return _this.format(Math.round(money * 100) / 100);
           }
       },
       format() {
@@ -606,6 +608,7 @@ export default {
             if (isNaN(parseFloat(num))) {
                 return '--';
             }
+            num = Math.round(num * 100) / 100;
             let re=/\d{1,3}(?=(\d{3})+$)/g;
             let n1=num.toString().replace(/^(\d+)((\.\d+)?)$/,function(s,s1,s2){return s1.replace(re,"$&,")+s2;});
             return n1;
@@ -755,7 +758,7 @@ export default {
                       return;
                   }
                   this.beforeCache();
-                  this.users[i].money += parseFloat(this.setMoneyValue) * this.setMoneyType;
+                  this.users[i].money += parseFloat(this.setMoneyValue) * 10000 * this.setMoneyType;
               }
             }
             this.moneyChangeVisible = false;
@@ -781,23 +784,23 @@ export default {
             }
             if (this.exchangeType === 1) {
                 this.quikType = type;
-                this.setStockCount = this.currentMoney(this.currentPerson) * type / this.setAssetsPrice;
+                this.setStockCount = Math.floor(this.currentMoney(this.currentPerson) * type / this.setAssetsPrice);
                 this.setStockMoney = this.setStockCount * this.setAssetsPrice;
             }
             if (this.exchangeType === -1) {
                 this.quikType = type;
-                this.setStockCount = this.maxSellCount(this.currentPerson, this.setAssetsValue) * this.quikType;
+                this.setStockCount = Math.floor(this.maxSellCount(this.currentPerson, this.setAssetsValue) * this.quikType);
                 this.setStockMoney = this.setStockCount * this.setAssetsPrice;
             }
         },
 
         changeCount() {
-            this.setStockMoney = this.setStockCount * this.setAssetsPrice;
+            this.setStockMoney = this.setStockCount * this.setAssetsPrice / 10000;
             this.quikType = 0;
         },
 
         changeMoney() {
-            this.setStockCount = this.setStockMoney / this.setAssetsPrice;
+            this.setStockCount = Math.floor((this.setStockMoney * 10000) / this.setAssetsPrice);
             this.quikType = 0;
         },
 
@@ -845,6 +848,7 @@ export default {
             this.setStockCount = '';
             this.exchangeType = 1;
             this.quikType = 0;
+            this.setStockMoney = '';
             this.stockChangeVisible = true;
         },
 
