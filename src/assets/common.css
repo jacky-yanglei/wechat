@@ -1,0 +1,20 @@
+@font-face {
+    font-family: '优设标题黑';
+    src: url('/static/common/优设标题黑.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    font-family: '优设标题黑';
+}
+body #app {
+    font-family: '优设标题黑';
+}
+
+body input {
+    font-family: '优设标题黑';
+}
+
+body select {
+    font-family: '优设标题黑';
+}

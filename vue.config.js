@@ -2,6 +2,13 @@ module.exports = {
   publicPath: '/',
   assetsDir: 'static',
   outputDir: 'dist',
+  chainWebpack: config => {
+    config.module
+      .rule('images')
+      .use('url-loader')
+      .loader('url-loader')
+      .tap(options => Object.assign(options, { limit: 200000 }))
+  },
   devServer: {
     proxy: {
         '/api/': {     //这里最好有一个 /
