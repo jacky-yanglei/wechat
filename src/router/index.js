@@ -6,6 +6,7 @@ import Exchange from '../views/Exchange.vue'
 import PlayerJoin from '../views/PlayerJoin.vue'
 import DmControl from '../views/DmControl.vue'
 import PlayerView from '../views/PlayerView.vue'
+import Register from '../views/ExchangeRegister.vue'
 
 Vue.use(VueRouter)
 
@@ -26,10 +27,16 @@ const routes = [
     component: DmControl
   },
   {
-    path: '/playerView',
+    path: '/playerView/:id',
     name: 'playerView',
     component: PlayerView
   },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register
+  },
+  
   // {
   //   path: '/',
   //   name: 'Home',

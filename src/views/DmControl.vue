@@ -41,7 +41,7 @@
                         </el-select>
                     </div>
                     <div class="type">
-                        <div><i class="check active"></i>入金</div>
+                        <div class="active"><i class="check active"></i>入金</div>
                         <div><i class="check"></i>出金</div>
                     </div>
                     <div>输入金额</div>
@@ -262,6 +262,11 @@ export default {
                     > div {
                         display: flex;
                         align-items: center;
+                        cursor: pointer;
+                        color: rgba(0, 0, 0, 0.5);
+                        &.active {
+                            color: #000;
+                        }
                         i {
                             margin-right: 5px;
                         }

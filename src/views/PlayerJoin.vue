@@ -3,7 +3,10 @@
         <div>
             <img src="../assets/exchange/code-box.png" alt="">
             <div class="code">
-                <a class="img"></a>
+                <a class="img" ref="qrcode"></a>
+            </div>
+            <div class="lun">
+                <img src="../assets/exchange/code-lun.png" alt="">
             </div>
         </div>
         <div>
@@ -19,6 +22,19 @@
 export default {
     data() {
         return {}
+    },
+    mounted() {
+        console.log(location.origin)
+        // eslint-disable-next-line no-undef
+        new QRCode(this.$refs.qrcode, {
+            text: location.origin + "/playView/" + '124',
+            width: 140,
+            height: 140,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            // eslint-disable-next-line no-undef
+            correctLevel : QRCode.CorrectLevel.H
+        })
     },
     methods: {
         startGame() {
@@ -41,8 +57,12 @@ export default {
         text-align: center;
         > div {
             &:first-child {
-                padding-top: 50px;
+                // padding-top: 50px;
+                > img {
+                    width: 200px;
+                }
                 position: relative;
+                z-index: 1;
                 .code {
                     position: absolute;
                     width: 100%;
@@ -51,15 +71,34 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding-top: 40px;
+                    padding-top: 60px;
                     height: 100%;
                     box-sizing: border-box;
                     > .img {
                         width: 150px;
                         height: 150px;
-                        display: inline-block;
+                        display: inline-flex;
+                        justify-content: center;
+                        align-items: center;
                         background-color: #fff;
                         border-radius: 6px;
+                    }
+                }
+                .lun {
+                    position: absolute;
+                    width: 100%;
+                    top: 0;
+                    left: 0;
+                    // display: flex;
+                    // align-items: center;
+                    // justify-content: center;
+                    padding-top: 15px;
+                    height: 100%;
+                    box-sizing: border-box;
+                    z-index: -1;
+                    > img {
+                        width: 120px;
+                        animation:turn 10s linear infinite;
                     }
                 }
             }
@@ -78,5 +117,12 @@ export default {
                 }
             }
         }
+    }
+    @keyframes turn{
+      0%{-webkit-transform:rotate(0deg);}
+      25%{-webkit-transform:rotate(90deg);}
+      50%{-webkit-transform:rotate(180deg);}
+      75%{-webkit-transform:rotate(270deg);}
+      100%{-webkit-transform:rotate(360deg);}
     }
 </style>
