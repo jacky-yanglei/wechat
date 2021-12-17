@@ -7,6 +7,8 @@ import PlayerJoin from '../views/PlayerJoin.vue'
 import DmControl from '../views/DmControl.vue'
 import PlayerView from '../views/PlayerView.vue'
 import Register from '../views/ExchangeRegister.vue'
+import Login from '../views/DmLogin.vue'
+import playerLogin from '../views/PlayerLogin.vue'
 
 Vue.use(VueRouter)
 
@@ -35,6 +37,16 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register
+  },
+  {
+    path: '/dmlogin',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/playerLogin/:id',
+    name: 'playerLogin',
+    component: playerLogin
   },
   
   // {
