@@ -34,9 +34,9 @@
                 <div>
                     <div>店名</div>
                     <div>
-                        <el-input v-model="store">
-                        </el-input>
+                        <el-input v-model="store"></el-input>
                     </div>
+                    <div class="error-text" v-if="postStatus && !store">店名不能为空</div>
                 </div>
                 <div>
                     <div>电话</div>
@@ -44,6 +44,7 @@
                         <el-input v-model="phone">
                         </el-input>
                     </div>
+                    <div class="error-text" v-if="postStatus && !phone">电话不能为空</div>
                 </div>
                 <div>
                     <div>地址</div>
@@ -51,6 +52,7 @@
                         <el-input v-model="address">
                         </el-input>
                     </div>
+                    <div class="error-text" v-if="postStatus && !address">地址不能为空</div>
                 </div>
                 <div class="btn">
                     <img @click="post()" src="../assets/exchange/active.png" alt="">
@@ -64,6 +66,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -79,6 +82,58 @@ export default {
     methods: {
         post() {
             this.postStatus = true;
+            this.post = true;
+            if (!this.valid()) {
+                return;
+            }
+            
+            axios.post(
+                process.env.VUE_APP_BASE_URL+ 'script/register/' + this.$route.params.id,
+                {
+                    "name": this.name,
+                    "store_name": this.store,
+                    "phone": this.phone,
+                    "address": this.address,
+                    "password": this.password,
+                }
+            ).then(({data}) => {
+                if(data.status === 200) {
+                    // this.$router.push('/ActiveSuccess');
+                    this.$alert('激活成功', '提示', {
+                        confirmButtonText: '确定',
+                        type: 'success',
+                        showClose: false,
+                        callback: () => {
+                            this.$router.push('/dmlogin');
+                        }
+                    });
+                } else {
+                    this.$message('注册失败');
+                }
+            }).catch(() => {
+                this.$message('注册失败');
+            })
+        },
+        valid() {
+            if (
+                !this.password
+                ||
+                !this.store
+                ||
+                !this.name
+                ||
+                !this.address
+                ||
+                !this.phone
+                ||
+                !this.confirmPassword
+            ) {
+                return false;
+            }
+            if (this.password !== this.confirmPassword) {
+                return false;
+            }
+            return true;
         }
     }
 }
@@ -93,7 +148,7 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
-    padding-bottom: 50px;
+    padding: 0 15px 50px;
     &::v-deep input{
         font-size: 16px;
         background-color: #301802;

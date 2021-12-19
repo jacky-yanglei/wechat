@@ -3,6 +3,17 @@
     <router-view/>
   </div>
 </template>
+<script>
+export default {
+  created() {
+  },
+  mounted() {
+    console.log('111');
+  },
+  methods: {
+  }
+}
+</script>
 
 <style>
 *, body {

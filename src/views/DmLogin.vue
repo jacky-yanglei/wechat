@@ -33,12 +33,47 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
             postStatus: false,
             name: '',
             password: ''
+        }
+    },
+    methods: {
+        post() {
+            this.postStatus = true;
+            if (!this.valid()) {
+                return;
+            }
+            axios.post(
+                process.env.VUE_APP_BASE_URL+ 'script/login',
+                {
+                    "name": this.name,
+                    "password": this.password,
+                }
+            ).then(({data}) => {
+                if(data.status === 200) {
+                    localStorage.setItem('token', data.data.token)
+                    this.$router.push('/home');
+                } else {
+                    this.$message({message: '登陆失败', type: 'error'});
+                }
+            }).catch(() => {
+                this.$message({message: '登陆失败', type: 'error'});
+            })
+        },
+        valid() {
+            if (
+                !this.password
+                ||
+                !this.name
+            ) {
+                return false;
+            }
+            return true;
         }
     }
 }
@@ -53,6 +88,7 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
+    padding: 0 15px;
     &::v-deep input{
         font-size: 16px;
         background-color: #301802;

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import checkId from '../views/checkId.vue'
+import checkId from '../views/checkId.vue'
 // import bottle from '../views/bottle.vue'
 import Exchange from '../views/Exchange.vue'
 import PlayerJoin from '../views/PlayerJoin.vue'
@@ -15,16 +15,26 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '',
+    name: 'checkId',
+    component: checkId
+  },
+  {
+    path: '/script/register/:id',
+    name: 'scriptRegister',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Register.vue')
+  },
+  {
+    path: '/home',
     name: 'home',
     component: Exchange
   },
   {
-    path: '/playerJoin',
+    path: '/playerJoin/:roomid',
     name: 'playerJoin',
     component: PlayerJoin
   },
   {
-    path: '/controlCenter',
+    path: '/controlCenter/:roomid',
     name: 'controlCenter',
     component: DmControl
   },
@@ -34,7 +44,7 @@ const routes = [
     component: PlayerView
   },
   {
-    path: '/register',
+    path: '/register/:id',
     name: 'register',
     component: Register
   },

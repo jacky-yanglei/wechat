@@ -15,7 +15,7 @@ export default {
         if (data.data) {
           this.$router.push('/login')
         } else {
-          this.$router.push('/registerInfo/' + this.$route.params.id)
+          this.$router.push('/register/' + this.$route.params.id)
         }
       })
     }

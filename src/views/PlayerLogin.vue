@@ -12,7 +12,7 @@
                         <el-input v-model="phone">
                         </el-input>
                     </div>
-                    <div class="error-text" v-if="postStatus && !name">手机号不能为空</div>
+                    <div class="error-text" v-if="postStatus && !phone">手机号不能为空</div>
                 </div>
                 <div>
                     <div>选择人物</div>
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import ws from '../assets/websoket.js';
 export default {
     data() {
         return {
@@ -48,24 +49,40 @@ export default {
             postStatus: '',
             roleOptions: [
                 {
-                    value: '派大星',
-                    label: '派大星'
+                    value: '觉觉',
+                    label: '觉觉'
                 }, 
                 {
-                    value: '海绵宝宝',
-                    label: '海绵宝宝'
+                    value: '飒飒',
+                    label: '飒飒'
                 }, 
                 {
-                    value: '双皮奶',
-                    label: '双皮奶'
+                    value: '霸霸',
+                    label: '霸霸'
                 }, 
                 {
-                    value: '选项4',
-                    label: '龙须面'
+                    value: '玛玛',
+                    label: '玛玛'
                 }, 
                 {
-                    value: '选项5',
-                    label: '北京烤鸭'
+                    value: '臭臭',
+                    label: '臭臭'
+                },
+                {
+                    value: '蒂蒂',
+                    label: "蒂蒂"
+                },
+                {
+                    value: '野也',
+                    label: "野也"
+                },
+                {
+                    value: '帅帅',
+                    label: "帅帅"
+                },
+                {
+                    value: '宝宝',
+                    label: "宝宝"
                 }
             ]
         }
@@ -73,6 +90,27 @@ export default {
     methods: {
         post() {
             this.postStatus = true;
+            if(this.phone && this.role) {
+                if (ws.status) {
+                    ws.send(JSON.stringify({data_type: 'init', data: this.role}));
+                } else {
+                    ws.init(this.$route.params.id);
+                    ws.onopen((e) => {
+                        console.log(e);
+                        ws.send(JSON.stringify({data_type: 'init', data: this.role}));
+                    });
+                    ws.onmessage(
+                        (e) => {
+                            if(e.data_type === 'init' && e.success) {
+                                sessionStorage.setItem('role', this.role);
+                                this.$router.replace('/playerView/' + this.$route.params.id);
+                            } else {
+                                this.$message({message: e.message, type: 'error'})
+                            }
+                        }
+                    );
+                }
+            }
         }
     }
 }
@@ -87,6 +125,7 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
+    padding: 0 15px;
     .el-select {
         width: 100%;
     }

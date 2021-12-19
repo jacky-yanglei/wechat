@@ -18,3 +18,17 @@ body input {
 body select {
     font-family: '优设标题黑';
 }
+
+.el-message-box__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.el-message-box {
+    max-width: 100%;
+}
+
+.el-message {
+    min-width: 80%;
+    top: 45%;
+}

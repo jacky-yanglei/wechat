@@ -1,5 +1,5 @@
 <template>
-    <div class="page">
+    <div class="page" v-if="tokenStatusLoading">
         <div class="banner">
             <img src="../assets/exchange/banner.png" alt="">
         </div>
@@ -25,14 +25,62 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
-        return {}
+        return {
+            tokenStatusLoading: false
+        }
+    },
+    created() {
+        this.checkToken()
+    },
+    mounted() {
     },
     methods: {
+        checkToken() {
+            axios.post(
+                process.env.VUE_APP_BASE_URL+ 'script/check_login',
+                {
+                },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+                }
+            ).then(({data}) => {
+                if(data.status === 200) {
+                    localStorage.setItem('token', data.data.new_token)
+                    this.tokenStatusLoading = true;
+                } else {
+                    this.$router.push('/login');
+                }
+            }).catch(() => {
+                this.checkToken();
+            })
+        },
         getCode() {
-            console.log('创建房间号并获取房间二维码');
-            this.$router.push('/playerJoin')
+            // console.log('创建房间号并获取房间二维码');
+            // this.$router.push('/playerJoin')
+            // 创建房间并获取房间号
+            axios.post(
+                process.env.VUE_APP_BASE_URL+ 'room/',
+                {
+                },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+                }
+            ).then(({data}) => {
+                if(data.status === 200) {
+                    this.$router.push('/playerJoin/' + data.data.room_id)
+                } else {
+                    this.$message({message: '网络异常，创建失败', type: 'error'});
+                }
+            }).catch(() => {
+                this.$message({message: '网络异常，创建失败', type: 'error'});
+            })
         }
     }
 }

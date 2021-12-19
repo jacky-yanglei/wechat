@@ -39,7 +39,6 @@ export default {
     },
     methods: {
         activate() {
-            console.log(1111);
             this.post = true;
             if (!this.valid()) {
                 return;

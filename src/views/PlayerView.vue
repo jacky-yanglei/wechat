@@ -91,6 +91,7 @@
 </template>
 <script>
 import highcharts from 'highcharts/highstock'
+import ws from '../assets/websoket';
 export default {
     data() {
         return {
@@ -98,6 +99,17 @@ export default {
             amount: '',  
             radio: 0,
             chart: null,
+        }
+    },
+    watch: {
+    },
+    created() {
+        if (ws.status) {
+            ws.onmessage((message) => {
+                console.log(message);
+            });
+        } else {
+            ws.reload(this.$route.params.id);
         }
     },
     mounted() {
@@ -166,16 +178,8 @@ export default {
                 }
             ]
         });
-        // setTimeout(() => {
-        //     let point = Math.random(10)*10
-        //     console.log(point);
-        //     this.chart.series[0].addPoint(
-        //         point
-        //     )
-        // }, 1000)
         setInterval(() => {
             let point = Math.random(10)*10
-            console.log(point);
             this.chart.series[0].addPoint(
                 point
             )
@@ -186,11 +190,11 @@ export default {
             this.exchangeType = index;
         },
         buy() {
-
+            ws.send(JSON.stringify({data_type: 'init', data: '觉觉'}))
         },
         sell() {
 
-        }
+        },
     }
 }
 </script>

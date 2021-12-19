@@ -12,7 +12,8 @@
         <div>
             <img src="../assets/exchange/player-join-text.png" alt="">
         </div>
-        <div>9/9</div>
+        <!-- <div>9/9</div> -->
+        <div>9人本</div>
         <div class="start-game">
             <img @click="startGame()" src="../assets/exchange/play-game.png" alt="">
         </div>
@@ -24,10 +25,10 @@ export default {
         return {}
     },
     mounted() {
-        console.log(location.origin)
+        console.log(this.$route.params.roomid)
         // eslint-disable-next-line no-undef
         new QRCode(this.$refs.qrcode, {
-            text: location.origin + "/playView/" + '124',
+            text: location.origin + "/playerLogin/" + this.$route.params.roomid,
             width: 140,
             height: 140,
             colorDark : "#000000",
@@ -39,7 +40,7 @@ export default {
     methods: {
         startGame() {
             console.log('开始游戏');
-            this.$router.push('/controlCenter')
+            this.$router.push('/controlCenter/' + this.$route.params.roomid)
         }
     }
 }

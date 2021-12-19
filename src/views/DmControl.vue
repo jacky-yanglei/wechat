@@ -83,7 +83,7 @@
                     <div>
                         <img src="../assets/exchange/code-box.png" alt="">
                         <div class="code">
-                            <a class="img"></a>
+                            <a class="img" ref="qrcode"></a>
                         </div>
                     </div>
                 </div>
@@ -99,35 +99,70 @@ export default {
             tabIndex: 1,
             role: '派大星', // 角色
             amount: '', // 数量
-
-
             roleOptions: [
                 {
-                    value: '派大星',
-                    label: '派大星'
+                    value: '觉觉',
+                    label: '觉觉'
                 }, 
                 {
-                    value: '海绵宝宝',
-                    label: '海绵宝宝'
+                    value: '飒飒',
+                    label: '飒飒'
                 }, 
                 {
-                    value: '双皮奶',
-                    label: '双皮奶'
+                    value: '霸霸',
+                    label: '霸霸'
                 }, 
                 {
-                    value: '选项4',
-                    label: '龙须面'
+                    value: '玛玛',
+                    label: '玛玛'
                 }, 
                 {
-                    value: '选项5',
-                    label: '北京烤鸭'
+                    value: '臭臭',
+                    label: '臭臭'
+                },
+                {
+                    value: '蒂蒂',
+                    label: "蒂蒂"
+                },
+                {
+                    value: '野也',
+                    label: "野也"
+                },
+                {
+                    value: '帅帅',
+                    label: "帅帅"
+                },
+                {
+                    value: '宝宝',
+                    label: "宝宝"
                 }
             ]
         }
     },
+    mounted() {
+        
+    },
     methods: {
         selectTab(index) {
             this.tabIndex = index;
+            if (index === 3) {
+                setTimeout(() => {
+                    this.getCode();
+                }, 1)
+            }
+        },
+        getCode() {
+            console.log(this.$route.params.roomid)
+            // eslint-disable-next-line no-undef
+            new QRCode(this.$refs.qrcode, {
+                text: location.origin + "/playerLogin/" + this.$route.params.roomid,
+                width: 120,
+                height: 120,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                // eslint-disable-next-line no-undef
+                correctLevel : QRCode.CorrectLevel.H
+            });
         }
     }
 }
@@ -181,6 +216,7 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                cursor: pointer;
                 &:nth-child(1) {
                     flex: 0 0 40%;
                     border-right: 1px solid #000000;
@@ -321,6 +357,9 @@ export default {
             > div {
                 padding-top: 5px;
                 position: relative;
+                img {
+                    width: 160px;
+                }
                 .code {
                     position: absolute;
                     width: 100%;
@@ -331,12 +370,15 @@ export default {
                     justify-content: center;
                     height: 100%;
                     box-sizing: border-box;
+                    padding-top: 60px;
                     > .img {
-                        width: 150px;
-                        height: 150px;
+                        width: 130px;
+                        height: 130px;
+                        padding: 5px;
                         display: inline-block;
                         background-color: #fff;
                         border-radius: 6px;
+                        box-sizing: border-box;
                     }
                 }
             }
