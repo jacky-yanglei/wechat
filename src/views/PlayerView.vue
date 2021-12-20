@@ -2,7 +2,7 @@
     <div class="page">
         <div class="title">
             <div>东印钞无限公司</div>
-            <div><span>价格：</span><span>76.2</span></div>
+            <div><span>价格：</span><span>{{ showPrice }}</span></div>
         </div>
         <div class="chart" ref="chart">
 
@@ -10,19 +10,19 @@
         <div class="marketvalue">
             <div>
                 <div>总资产</div>
-                <div>1000万元</div>
+                <div>{{ numberTransform(userInfo.cash + userInfo.stock * price) }}万元</div>
             </div>
             <div>
                 <div>现金</div>
-                <div>100万元</div>
+                <div>{{ numberTransform(userInfo.cash) }}万元</div>
             </div>
             <div>
                 <div>股票价值</div>
-                <div>900万元</div>
+                <div>{{ numberTransform(userInfo.stock * price) }}万元</div>
             </div>
             <div>
                 <div>持仓量</div>
-                <div>5000股</div>
+                <div>{{ userInfo.stock ? userInfo.stock.toFixed(0) : 0 }}股</div>
             </div>
         </div>
         <div class="channel">
@@ -44,14 +44,14 @@
         <div class="print">
             <div class="type">
                 <div @click="selectExchange(0)" :class="exchangeType === 0 ? 'active' : ''"><i class="check" :class="exchangeType === 0 ? 'active' : ''"></i>买入</div>
-                <div @click="selectExchange(1)" :class="exchangeType === 1 ? 'active' : ''"><i class="check" :class="exchangeType === 1 ? 'active' : ''"></i>卖出  </div>
+                <div @click="selectExchange(1)" :class="exchangeType === 1 ? 'active' : ''"><i class="check" :class="exchangeType === 1 ? 'active' : ''"></i>卖出</div>
             </div>
             <div>
-                <div>输入金额</div>
+                <div>{{ exchangeType === 0?'输入金额':'数量'}}</div>
                 <div class="input-group">
-                    <el-input type="number" v-model="amount">
+                    <el-input type="number" @input="amountChange()" v-model="amount">
                     </el-input>
-                    <i class="after">万元</i>
+                    <i class="after">{{ exchangeType === 0?'万元':'股'}}</i>
                 </div>
             </div>
             <div class="slider-block">
@@ -60,6 +60,7 @@
                     v-model="radio"
                     :show-tooltip="false"
                     :step="0.1"
+                    @change="radioChange()"
                     show-stops>
                     </el-slider>
                 </div>
@@ -82,9 +83,18 @@
                 <div>75%</div>
                 <div>100%</div>
             </div>
-            <div class="btn">
+            <div class="btn" v-if="openTrade && !onTrading">
                 <img v-if="exchangeType === 0" @click="buy()" src="../assets/exchange/buy-btn.png" alt="">
                 <img v-if="exchangeType === 1" @click="sell()" src="../assets/exchange/sell-btn.png" alt="">
+            </div>
+            <div class="btn disabled" v-if="!openTrade && !onTrading">
+                <span>
+                    <img v-if="exchangeType === 0" src="../assets/exchange/buy-btn.png" alt="">
+                    <img v-if="exchangeType === 1" src="../assets/exchange/sell-btn.png" alt="">
+                </span>
+            </div>
+            <div class="btn" v-if="onTrading">
+                <img @click="cancel()" src="../assets/exchange/cancel-btn.png" alt="">
             </div>
         </div>
     </div>
@@ -92,6 +102,7 @@
 <script>
 import highcharts from 'highcharts/highstock'
 import ws from '../assets/websoket';
+import { setTimeout } from 'timers';
 export default {
     data() {
         return {
@@ -99,101 +110,293 @@ export default {
             amount: '',  
             radio: 0,
             chart: null,
+            price: null,
+            priceList: [],
+            openTrade: false,
+            onTrading: false,
+            userInfo: {
+
+            }
         }
+    },
+    computed: {
+          showPrice() {
+              if (this.price) {
+                  return this.price
+              } 
+              return '--';
+          },
+          numberTransform() {
+              return function(num) {
+                  if (isNaN(parseFloat(num))) {
+                      return '--'
+                  } else {
+                      return (parseFloat(num)/10000).toFixed(1);
+                  }
+              }
+          }
     },
     watch: {
     },
     created() {
-        if (ws.status) {
-            ws.onmessage((message) => {
-                console.log(message);
-            });
-        } else {
-            ws.reload(this.$route.params.id);
-        }
+        
     },
     mounted() {
-        this.chart = highcharts.chart(this.$refs.chart, {
-            chart: {
-                backgroundColor: 'rgba(0,0,0,0)'
-            },
-            animation: {
-                easing: 'easeOutBounce'
-            },
-            title: {
-                text: ''
-            },
-            colors: [
-                '#BC844F'
-            ],
-            subtitle: {
-                text: ''
-            },
-            credits: {
-                enabled: false
-            },
-            yAxis: {
-                title: {
-                    text: ''
-                },
-                tickWidth:0,
-                gridLineWidth: 0,
-                labels: {
-                    enabled: false
-                },
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderColor: 'rgba(0,0,0,0)',
-                shadow: false,
-                enabled: false
-            },
-            xAxis: {
-                lineWidth :0,
-                tickWidth:0,
-                title: {
-                    text: ''
-                },
-                labels: {
-                    enabled: false
-                },
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false,
-                        enabled: false
-                    },
-                }
-            },
-            series: [
-                {
-                    marker: {
-                        enabled: false
-                    },
-                    data: [1,2,3,4]
-                }
-            ]
-        });
-        setInterval(() => {
-            let point = Math.random(10)*10
-            this.chart.series[0].addPoint(
-                point
-            )
-        }, 1000);
+        this.initWs();
     },
     methods: {
+        initWs() {
+            if (ws.status) {
+                this.postGetUserInfo();
+                this.postGetRoomInfo();
+                ws.onmessage((e) => {
+                    this.initOnMessage(e);
+                });
+            } else {
+                ws.reload(this.$route.params.id, () => {
+                    this.postGetUserInfo();
+                    this.postGetRoomInfo();
+                });
+                ws.onmessage((e) => {
+                    this.initOnMessage(e);
+                });
+            }
+        },
+        // 监听数量变化
+        amountChange() {
+            if (isNaN(parseFloat(this.amount))) {
+                this.radio = 0;
+                return;
+            }
+            if (this.exchangeType === 0) {
+                this.radio = parseFloat(this.amount) * 10000 / this.userInfo.cash * 100;
+                if (this.radio > 100) {
+                    this.radio = 100
+                }
+            }
+            if (this.exchangeType === 1) {
+                this.radio = parseFloat(this.amount)/ this.userInfo.stock * 100;
+                if (this.radio > 100) {
+                    this.radio = 100
+                }
+            }
+        },
+
+        // 撤单
+        cancel() {
+            ws.send(JSON.stringify({data_type: 'cancel', data: null}));
+        },
+
+        radioChange() {
+            if (this.exchangeType === 0) {
+                this.amount = (this.userInfo.cash*this.radio/100/10000).toFixed(1);
+            }
+            if (this.exchangeType === 1) {
+                this.amount = (this.userInfo.stock*this.radio/100/10000).toFixed(1);
+            }
+        },
+
+        initOnMessage(e) {
+            if (e.data_type === 'buy' || e.data_type === 'sell') {
+                if (e.success) {
+                    this.amount = '';
+                    this.amountChange();
+                    this.postGetUserInfo();
+                    this.$message({type: 'success', message: e.message})
+                } else {
+                    this.postGetUserInfo();
+                    this.$message({type: 'error', message: e.message})
+                }
+            }
+            if (e.data_type === 'user_info') {
+                if (e.success) {
+                    this.getUserInfo(e.data);
+                }
+            }
+            if (e.data_type === 'room_info') {
+                if (e.success) {
+                    this.getRoomInfo(e.data);
+                }
+            }
+            if (e.data_type === 'cancel') {
+                if (e.success) {
+                    this.onTrading = false;
+                    this.$message({type: 'success', message: e.message});
+                } else {
+                    this.$message({type: 'error', message: e.message});
+                }
+            }
+        },
+        
         selectExchange(index) {
             this.exchangeType = index;
+            this.amount = '';
+            this.amountChange();
+        },
+        postGetUserInfo() {
+            ws.send(JSON.stringify({data_type: 'user_info', data: {name: sessionStorage.getItem('role')}}));
+        },
+        postGetRoomInfo() {
+            ws.send(JSON.stringify({data_type: 'room_info', data: {}}));
+        },
+        // 获取用户信息
+        getUserInfo(data) {
+            this.onTrading = data.wait_for_trade.buy + data.wait_for_trade.sell > 0;
+            this.userInfo = data;
+        },
+        // 获取用户信息
+        getRoomInfo(data) {
+            console.log('getRoomInfo');
+            this.price = data.price;
+            this.openTrade = data.is_open_trade;
+            let initLine = [];
+            for (let i = 0;i < data.price_line.length; i++) {
+                initLine.push(data.price_line[i].price);
+            }
+            if (this.priceList.length > 0) {
+                if (initLine.length === this.priceList.length) {
+                    return;
+                } else {
+                    console.log('updateChart')
+                    let upLine = initLine.slice(this.priceList.length);
+                    this.priceList = initLine;
+                    this.updateChart(upLine);
+                }
+            } else {
+                this.priceList = initLine;
+                console.log('initChart');
+                this.initChart();
+            }
+        },
+        updateChart(line) {
+            for (let i = 0; i < line.length; i++) {
+                setTimeout(() => {
+                    console.log(line[i]);
+                    this.chart.series[0].addPoint(line[i])
+                }, (i+1) * 300)
+            }
         },
         buy() {
-            ws.send(JSON.stringify({data_type: 'init', data: '觉觉'}))
+            if (!this.amount) {
+                this.$message({type: 'error', message: '请输入金额'});
+                return;
+            }
+            if (isNaN(parseFloat(this.amount))) {
+                this.$message({type: 'error', message: '请输入正确的金额'});
+                return;
+            }
+            if (parseFloat(this.amount) <= 0) {
+                this.$message({type: 'error', message: '金额必须大于0'});
+                return;
+            }
+            if (parseFloat(this.amount*10000) > this.userInfo.cash) {
+                this.$confirm(`现金不足，最多可使用现金为${(this.userInfo.cash/10000).toFixed(1)}万元，是否将当前的现金全部买入?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    ws.send(JSON.stringify({data_type: 'buy', data: this.userInfo.cash}))
+                }).catch(() => {
+                    
+                });
+            } else {
+                ws.send(JSON.stringify({data_type: 'buy', data: parseFloat(this.amount) * 10000}))
+            }
         },
         sell() {
-
+            if (!this.amount) {
+                this.$message({type: 'error', message: '请输入数量'});
+                return;
+            }
+            if (isNaN(parseFloat(this.amount))) {
+                this.$message({type: 'error', message: '请输入正确的数量'});
+                return;
+            }
+            if (parseFloat(this.amount) <= 0) {
+                this.$message({type: 'error', message: '数量必须大于0'});
+                return;
+            }
+            if (this.userInfo.stock < this.amount) {
+                this.$confirm(`股票数量不足，最多可使用${this.userInfo.stock}股，是否将持有股票全部卖出?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    ws.send(JSON.stringify({data_type: 'sell', data: this.userInfo.stock}))
+                }).catch(() => {
+                    
+                });
+            } else {
+                ws.send(JSON.stringify({data_type: 'sell', data: parseFloat(this.amount)}))
+            }
+        },
+        initChart() {
+            console.log(this.priceList);
+            this.chart = highcharts.chart(this.$refs.chart, {
+                chart: {
+                    backgroundColor: 'rgba(0,0,0,0)'
+                },
+                animation: {
+                    easing: 'easeOutBounce'
+                },
+                title: {
+                    text: ''
+                },
+                colors: [
+                    '#BC844F'
+                ],
+                subtitle: {
+                    text: ''
+                },
+                credits: {
+                    enabled: false
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    },
+                    tickWidth:0,
+                    gridLineWidth: 0,
+                    labels: {
+                        enabled: false
+                    },
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    borderColor: 'rgba(0,0,0,0)',
+                    shadow: false,
+                    enabled: false
+                },
+                xAxis: {
+                    lineWidth :0,
+                    tickWidth:0,
+                    title: {
+                        text: ''
+                    },
+                    labels: {
+                        enabled: false
+                    },
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false,
+                            enabled: false
+                        },
+                    }
+                },
+                series: [
+                    {
+                        marker: {
+                            enabled: false
+                        },
+                        data: this.priceList
+                    }
+                ]
+            });
         },
     }
 }
@@ -453,8 +656,26 @@ export default {
     .btn {
         margin-top: 20px;
         text-align: center;
+        &.disabled {
+            span {
+                position: relative;
+                display: inline-block;
+                
+            }
+            span::after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                left: 0;
+                border-radius: 10px;
+                top: 0;
+            }
+        }
         img {
             cursor: pointer;
+            vertical-align: middle;
         }
     }
 }

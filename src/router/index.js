@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import checkId from '../views/checkId.vue'
+// import checkId from '../views/checkId.vue'
 // import bottle from '../views/bottle.vue'
 import Exchange from '../views/Exchange.vue'
 import PlayerJoin from '../views/PlayerJoin.vue'
@@ -16,7 +16,7 @@ const routes = [
   {
     path: '',
     name: 'checkId',
-    component: checkId
+    component: Login
   },
   {
     path: '/script/register/:id',

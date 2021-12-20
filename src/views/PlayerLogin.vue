@@ -92,20 +92,23 @@ export default {
             this.postStatus = true;
             if(this.phone && this.role) {
                 if (ws.status) {
-                    ws.send(JSON.stringify({data_type: 'init', data: this.role}));
+                    ws.send(JSON.stringify({data_type: 'init', data: {name: this.role, phone: this.phone}}));
                 } else {
                     ws.init(this.$route.params.id);
                     ws.onopen((e) => {
                         console.log(e);
-                        ws.send(JSON.stringify({data_type: 'init', data: this.role}));
+                        ws.send(JSON.stringify({data_type: 'init', data: {name: this.role, phone: this.phone}}));
                     });
                     ws.onmessage(
                         (e) => {
-                            if(e.data_type === 'init' && e.success) {
-                                sessionStorage.setItem('role', this.role);
-                                this.$router.replace('/playerView/' + this.$route.params.id);
-                            } else {
-                                this.$message({message: e.message, type: 'error'})
+                            if(e.data_type === 'init') {
+                                if(e.success) {
+                                    sessionStorage.setItem('role', this.role);
+                                    sessionStorage.setItem('phone', this.phone);
+                                    this.$router.replace('/playerView/' + this.$route.params.id);
+                                } else {
+                                    this.$message({message: e.message, type: 'error'})
+                                }
                             }
                         }
                     );
@@ -121,7 +124,7 @@ export default {
     min-height: 100vh;
     max-width: 750px;
     margin: 0 auto;
-    background-image: url('/static/images/exchange/bg.png');
+    background-image: url('/ddd/static/images/exchange/bg.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;

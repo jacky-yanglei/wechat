@@ -84,7 +84,7 @@ export default {
     min-height: 100vh;
     max-width: 750px;
     margin: 0 auto;
-    background-image: url('/static/images/exchange/bg.png');
+    background-image: url('/ddd/static/images/exchange/bg.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;

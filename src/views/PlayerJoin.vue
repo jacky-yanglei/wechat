@@ -20,15 +20,17 @@
     </div>
 </template>
 <script>
+import ws from '../assets/websoket';
 export default {
     data() {
         return {}
     },
     mounted() {
-        console.log(this.$route.params.roomid)
+        this.initWs();
+        console.log(this.$route.params.roomid);
         // eslint-disable-next-line no-undef
         new QRCode(this.$refs.qrcode, {
-            text: location.origin + "/playerLogin/" + this.$route.params.roomid,
+            text: location.origin + process.env.VUE_APP_Redirect + "/playerLogin/" + this.$route.params.roomid,
             width: 140,
             height: 140,
             colorDark : "#000000",
@@ -38,6 +40,29 @@ export default {
         })
     },
     methods: {
+        initWs() {
+            sessionStorage.setItem('role', 'admin');
+            if (ws.status) {
+                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: ''}}));
+            } else {
+                ws.init(this.$route.params.roomid);
+                ws.onopen((e) => {
+                    console.log(e);
+                    ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: ''}}));
+                });
+                ws.onmessage(
+                    (e) => {
+                        if(e.data_type === 'init') {
+                            if (e.success) {
+                                sessionStorage.setItem('role', {name: "admin", phone: ''});
+                            } else {
+                                this.$message({message: e.message, type: 'error'})
+                            }   
+                        }
+                    }
+                );
+            }
+        },
         startGame() {
             console.log('开始游戏');
             this.$router.push('/controlCenter/' + this.$route.params.roomid)

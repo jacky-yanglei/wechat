@@ -1,7 +1,10 @@
 module.exports = {
-  publicPath: '/',
+  publicPath: '/ddd',
   assetsDir: 'static',
   outputDir: 'dist',
+  // build: {
+  //   assetsPublicPath: '/ddd/'
+  // },
   chainWebpack: config => {
     config.module
       .rule('images')

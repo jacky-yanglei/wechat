@@ -24,12 +24,15 @@ class joinRoomWs {
             this.reload(this.roomId);
         }
     }
-    reload(roomId) {
+    reload(roomId, callback) {
         this.status = false;
         this.init(roomId);
         this.onopen(() => {
             if (sessionStorage.getItem('role')) {
-                this.send(JSON.stringify({data_type: 'init', data: sessionStorage.getItem('role')}))
+                this.send(JSON.stringify({data_type: 'init', data: {name: sessionStorage.getItem('role'), phone: sessionStorage.getItem('phone') || ''}}))
+                if (callback) {
+                    callback();
+                }
             }
         })
     }
@@ -39,10 +42,15 @@ class joinRoomWs {
         };
     }
     send(data) {
+        console.log(this.status);
+        console.log(data);
         if (this.status) {
             this.WebSocket.send(data)
         } else {
             console.log('您还没有建立连接');
+            this.reload(this.roomId, () => {
+                this.WebSocket.send(data)
+            });
         }
     }
     onmessage(callback) {
