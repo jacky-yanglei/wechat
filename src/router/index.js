@@ -9,6 +9,9 @@ import PlayerView from '../views/PlayerView.vue'
 import Register from '../views/ExchangeRegister.vue'
 import Login from '../views/DmLogin.vue'
 import playerLogin from '../views/PlayerLogin.vue'
+import CheckPhone from '../views/CheckPhone.vue'
+import lottoy from '../views/lottoy.vue'
+import setAddress from '../views/setAddress.vue'
 
 Vue.use(VueRouter)
 
@@ -57,6 +60,21 @@ const routes = [
     path: '/playerLogin/:id',
     name: 'playerLogin',
     component: playerLogin
+  },
+  {
+    path: '/check_phone',
+    name: 'check_phone',
+    component: CheckPhone
+  },
+  {
+    path: '/lottery',
+    name: 'lottery',
+    component: lottoy
+  },
+  {
+    path: '/setAddress',
+    name: 'setAddress',
+    component: setAddress
   },
   
   // {

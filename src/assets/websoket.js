@@ -10,18 +10,21 @@ class joinRoomWs {
     init(roomId) {
         console.log('init')
         this.roomId = roomId;
-        let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
+        // let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
+        let url = 'ws://192.168.100.33:8000/api2/ws/';
         this.WebSocket = new WebSocket(url + roomId + '/');
         this.status = true;
         this.WebSocket.onclose = (e) => {
             console.log('onclose WebSocket断开链接');
             console.log(e);
-            this.reload(this.roomId);
+            setTimeout(() => {
+                this.reload(this.roomId);
+            }, 1000);
         }
-        this.WebSocket.onerror = (e) => {
+        this.WebSocket.onerror = () => {
             console.log('onerror WebSocket断开链接');
-            console.log(e);
-            this.reload(this.roomId);
+            // console.log(e);
+            // this.reload(this.roomId);
         }
     }
     reload(roomId, callback) {

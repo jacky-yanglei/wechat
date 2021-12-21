@@ -54,7 +54,7 @@ export default {
                     (e) => {
                         if(e.data_type === 'init') {
                             if (e.success) {
-                                sessionStorage.setItem('role', {name: "admin", phone: ''});
+                                sessionStorage.setItem('role', "admin");
                             } else {
                                 this.$message({message: e.message, type: 'error'})
                             }   

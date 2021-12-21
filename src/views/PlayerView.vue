@@ -122,8 +122,8 @@ export default {
     computed: {
           showPrice() {
               if (this.price) {
-                  return this.price
-              } 
+                  return this.price.toFixed(2)
+              }
               return '--';
           },
           numberTransform() {
@@ -143,6 +143,15 @@ export default {
     },
     mounted() {
         this.initWs();
+        // setInterval(() => {
+        //     let price = Math.random(10) * 100;
+        //     this.getRoomInfo({
+        //         is_open_trade: false,
+        //         joined: ["admin", "觉觉"],
+        //         price: price,
+        //         price_line: [{price: price, time: 1640052517}]
+        //     })
+        // }, 1000)
     },
     methods: {
         initWs() {
@@ -192,24 +201,27 @@ export default {
                 this.amount = (this.userInfo.cash*this.radio/100/10000).toFixed(1);
             }
             if (this.exchangeType === 1) {
-                this.amount = (this.userInfo.stock*this.radio/100/10000).toFixed(1);
+                this.amount = (this.userInfo.stock*this.radio/100).toFixed(1);
             }
         },
 
         initOnMessage(e) {
             if (e.data_type === 'buy' || e.data_type === 'sell') {
                 if (e.success) {
-                    this.amount = '';
-                    this.amountChange();
-                    this.postGetUserInfo();
+                    this.onTrading = true;
+                    // this.amount = '';
+                    // this.amountChange();
+                    // this.postGetUserInfo();
                     this.$message({type: 'success', message: e.message})
                 } else {
-                    this.postGetUserInfo();
+                    // this.postGetUserInfo();
                     this.$message({type: 'error', message: e.message})
                 }
             }
             if (e.data_type === 'user_info') {
                 if (e.success) {
+                    this.amount = '';
+                    this.amountChange();
                     this.getUserInfo(e.data);
                 }
             }
@@ -224,6 +236,11 @@ export default {
                     this.$message({type: 'success', message: e.message});
                 } else {
                     this.$message({type: 'error', message: e.message});
+                }
+            }
+            if (e.data_type === 'price_line') {
+                if(e.success) {
+                    this.getPriceChart(e.data);
                 }
             }
         },
@@ -244,37 +261,57 @@ export default {
             this.onTrading = data.wait_for_trade.buy + data.wait_for_trade.sell > 0;
             this.userInfo = data;
         },
-        // 获取用户信息
-        getRoomInfo(data) {
-            console.log('getRoomInfo');
+        getPriceChart(data) {
             this.price = data.price;
-            this.openTrade = data.is_open_trade;
-            let initLine = [];
-            for (let i = 0;i < data.price_line.length; i++) {
-                initLine.push(data.price_line[i].price);
-            }
+            let initLine = [data.price];
+            // for (let i = 0;i < data.price_line.length; i++) {
+            //     initLine.push(data.price);
+            // }
             if (this.priceList.length > 0) {
-                if (initLine.length === this.priceList.length) {
-                    return;
-                } else {
-                    console.log('updateChart')
-                    let upLine = initLine.slice(this.priceList.length);
-                    this.priceList = initLine;
-                    this.updateChart(upLine);
-                }
+                this.updateChart(initLine);
+                // if (initLine.length === this.priceList.length) {
+                //     return;
+                // } else {
+                //     console.log('updateChart')
+                //     let upLine = initLine.slice(this.priceList.length);
+                //     this.priceList = initLine;
+                //     this.updateChart(upLine);
+                // }
             } else {
-                this.priceList = initLine;
-                console.log('initChart');
+                this.priceList = [data.price];
                 this.initChart();
             }
         },
+        // 获取用户信息
+        getRoomInfo(data) {
+            console.log('getRoomInfo');
+            
+            this.openTrade = data.is_open_trade;
+        },
         updateChart(line) {
-            for (let i = 0; i < line.length; i++) {
-                setTimeout(() => {
-                    console.log(line[i]);
-                    this.chart.series[0].addPoint(line[i])
-                }, (i+1) * 300)
+            if (this.chart.series[0].data.length > 200) {
+                this.priceList = this.priceList.concat(line);
+                this.priceList = this.priceList.slice(-201);
+                this.chart.update(
+                    {
+                        chart: {
+                            animation: false
+                        },
+                        series: [
+                            {
+                                data: this.priceList
+                            }
+                        ]
+                    }
+                )
+            } else {
+                for (let i = 0; i < line.length; i++) {
+                    setTimeout(() => {
+                        this.chart.series[0].addPoint(line[i])
+                    }, (i) * 300)
+                }
             }
+            
         },
         buy() {
             if (!this.amount) {
@@ -331,10 +368,10 @@ export default {
             }
         },
         initChart() {
-            console.log(this.priceList);
             this.chart = highcharts.chart(this.$refs.chart, {
                 chart: {
-                    backgroundColor: 'rgba(0,0,0,0)'
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    spacingTop: 0
                 },
                 animation: {
                     easing: 'easeOutBounce'
@@ -390,6 +427,7 @@ export default {
                 },
                 series: [
                     {
+                        lineWidth: 1,
                         marker: {
                             enabled: false
                         },

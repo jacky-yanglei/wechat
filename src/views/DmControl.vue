@@ -12,9 +12,13 @@
                         inactive-color="#ff4949">
                     </el-switch>
                 </div>
-                <div class="open-price" style="opacity:0">
-                    <img src="../assets/exchange/open-price.png" alt="">
+                <div>
+                    <div>1、开启交易阶段不能调整价格</div>
+                    <div>2、关闭交易后开始计算最终价，价格开始变动（如有需要，此时DM可以用调价功能修改最终价）</div>
                 </div>
+                <!-- <div class="open-price" style="opacity:0">
+                    <img src="../assets/exchange/open-price.png" alt="">
+                </div> -->
             </div>
             <img class="channel" src="../assets/exchange/channel.png" alt="">
         </div>
@@ -27,6 +31,7 @@
                     <span>价格控制</span>
                 </div>
                 <div @click="selectTab(3)" :class="tabIndex === 3?'active':''"><img class="channel" src="../assets/exchange/minicode.png" alt=""></div>
+                <div @click="selectTab(4)" :class="tabIndex === 4?'active':''">MVP</div>
             </div>
             <div class="content">
                 <div v-if="tabIndex === 1" class="section1">
@@ -88,6 +93,29 @@
                         </div>
                     </div>
                 </div>
+                <div v-if="tabIndex === 4" class="section4">
+                    <div>
+                        录入本场MVP
+                    </div>
+                    <div>选择人物</div>
+                    <div>
+                        <el-select v-model="mvp" placeholder="请选择">
+                            <el-option
+                            v-for="item in roleOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div>录入手机号</div>
+                    <div>
+                        <el-input v-model="mvpPhone"></el-input>
+                    </div>
+                    <div class="confirm-btn">
+                        <img @click="mvpPost()" src="../assets/exchange/confirm-btn.png" alt="">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -103,6 +131,8 @@ export default {
             amount: '', // 数量
             price: '',
             exchangeType: 0,
+            mvp: '',
+            mvpPhone: '',
             roomInfo: {},
             roleOptions: [
                 {
@@ -162,6 +192,9 @@ export default {
                 }, 1)
             }
         },
+        mvpPost() {
+            ws.send(JSON.stringify({data_type: 'set_mvp', data: {name: this.mvp, phone: this.mvpPhone}}));
+        },
         getCode() {
             // console.log(this.$route.params.roomid)
             // console.log(process.env.VUE_APP_Redirect)
@@ -219,7 +252,23 @@ export default {
             }
             if (e.data_type === 'change_price') {
                 if (e.success) {
+                    this.$message({type: 'success', message: '价格调整成功'});
+                } else {
+                    this.$message({type: 'error', message: e.message});
+                }
+            }
+            if (e.data_type === 'set_mvp') {
+                if (e.success) {
                     this.$message({type: 'success', message: e.message});
+                } else {
+                    this.$message({type: 'error', message: e.message});
+                }
+            }
+            if (e.data_type === 'trade_switch') {
+                if (e.success) {
+                    this.$message({type: 'success', message: e.message});
+                } else {
+                    this.$message({type: 'error', message: e.message});
                 }
             }
         },
@@ -231,7 +280,6 @@ export default {
             this.value = data.is_open_trade;
         },
         changeExchange(e) {
-            console.log(e);
             ws.send(JSON.stringify({"data_type": 'trade_switch', data: e}));
         },
         exchange() {
@@ -298,10 +346,16 @@ export default {
             > div {
                 &:first-child {
                     display: flex;
-                    justify-content: space-between;
+                    // justify-content: space-between;
                     align-items: center;
                     margin-bottom: 20px;
                     font-size: 24px;
+                    > div:first-child {
+                        margin-right: 20px;
+                    }
+                }
+                &:last-child {
+                    text-align: left;
                 }
             }
             .open-price {
@@ -330,7 +384,7 @@ export default {
                 align-items: center;
                 cursor: pointer;
                 &:nth-child(1) {
-                    flex: 0 0 40%;
+                    flex: 0 0 30%;
                     border-right: 1px solid #000000;
                     &.active {
                         background-color: #CCB480;
@@ -342,7 +396,7 @@ export default {
                     }
                 }
                 &:nth-child(2) {
-                    flex: 0 0 40%;
+                    flex: 0 0 30%;
                     border-left: 1px solid transparent;
                     border-right: 1px solid #000000;
                     &.active {
@@ -355,6 +409,19 @@ export default {
                     }
                 }
                 &:nth-child(3) {
+                    flex: 0 0 20%;
+                    border-left: 1px solid transparent;
+                    border-right: 1px solid #000000;
+                    &.active {
+                        background-color: #CCB480;
+                        border-right: 1px solid transparent;
+                        height: 46px;
+                        &+div {
+                            border-left: 1px solid #000000;
+                        }
+                    }
+                }
+                &:nth-child(4) {
                     flex: 0 0 20%;
                     border-left: 1px solid transparent;
                     &.active {
@@ -493,6 +560,25 @@ export default {
                         border-radius: 6px;
                         box-sizing: border-box;
                     }
+                }
+            }
+        }
+        .section4 {
+            > div {
+                &:first-child {
+                    margin-bottom: 20px;
+                    font-size: 20px;
+                }
+                &:nth-child(3) {
+                    margin-bottom: 10px
+                }
+            }
+            .confirm-btn {
+                margin-top: 50px;
+                text-align: center;
+                margin-bottom: 50px;
+                > img {
+                    cursor: pointer;
                 }
             }
         }
