@@ -10,8 +10,8 @@ class joinRoomWs {
     init(roomId) {
         console.log('init')
         this.roomId = roomId;
-        // let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
-        let url = 'ws://192.168.100.33:8000/api2/ws/';
+        let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
+        // let url = 'ws://192.168.100.33:8000/api2/ws/';
         this.WebSocket = new WebSocket(url + roomId + '/');
         this.status = true;
         this.WebSocket.onclose = (e) => {
