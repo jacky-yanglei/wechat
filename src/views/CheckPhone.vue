@@ -30,12 +30,14 @@ export default {
     data() {
         return {
             phone: '',
-            postStatus: ''
+            postStatus: false
         }
     },
     methods: {
         post() {
-            console.log('验证手机号')
+            this.postStatus = true;
+            this.$router.push('/lottery');
+            console.log('验证手机号');
         }
     }
 }
