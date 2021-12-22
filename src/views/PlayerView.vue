@@ -13,15 +13,15 @@
         <div class="marketvalue">
             <div>
                 <div>总资产</div>
-                <div>{{ numberTransform(userInfo.cash + userInfo.stock * price) }}万元</div>
+                <div>{{ numberTransform(userInfo.cash + userInfo.stock * price) }}</div>
             </div>
             <div>
                 <div>现金</div>
-                <div>{{ numberTransform(userInfo.cash) }}万元</div>
+                <div>{{ numberTransform(userInfo.cash) }}</div>
             </div>
             <div>
                 <div>股票价值</div>
-                <div>{{ numberTransform(userInfo.stock * price) }}万元</div>
+                <div>{{ numberTransform(userInfo.stock * price) }}</div>
             </div>
             <div>
                 <div>持仓量</div>
@@ -136,8 +136,10 @@ export default {
             return function(num) {
                 if (isNaN(parseFloat(num))) {
                     return '--'
+                } else if (parseFloat(num) > 100000000) {
+                    return (parseFloat(num)/100000000).toFixed(2) + '亿元';
                 } else {
-                    return (parseFloat(num)/10000).toFixed(1);
+                    return (parseFloat(num)/10000).toFixed(2) + '万元';
                 }
             }
         }
@@ -433,7 +435,7 @@ export default {
                 },
                 series: [
                     {
-                        lineWidth: 1,
+                        lineWidth: 2,
                         marker: {
                             enabled: false
                         },
