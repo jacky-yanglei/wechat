@@ -7,6 +7,9 @@
         <div class="chart" ref="chart">
 
         </div>
+        <div class="role">
+            {{ currentRole }}
+        </div>
         <div class="marketvalue">
             <div>
                 <div>总资产</div>
@@ -120,21 +123,24 @@ export default {
         }
     },
     computed: {
-          showPrice() {
-              if (this.price) {
-                  return this.price.toFixed(2)
-              }
-              return '--';
-          },
-          numberTransform() {
-              return function(num) {
-                  if (isNaN(parseFloat(num))) {
-                      return '--'
-                  } else {
-                      return (parseFloat(num)/10000).toFixed(1);
-                  }
-              }
-          }
+        currentRole() {
+            return sessionStorage.getItem('role') || '--'
+        },
+        showPrice() {
+            if (this.price) {
+                return this.price.toFixed(2)
+            }
+            return '--';
+        },
+        numberTransform() {
+            return function(num) {
+                if (isNaN(parseFloat(num))) {
+                    return '--'
+                } else {
+                    return (parseFloat(num)/10000).toFixed(1);
+                }
+            }
+        }
     },
     watch: {
     },
@@ -490,6 +496,10 @@ export default {
         border: 2px solid #A89061;
         box-sizing: border-box;
         margin: 0 16px;
+    }
+    .role {
+        margin: 0 16px;
+        padding: 10px 16px 0;
     }
     .marketvalue {
         display: flex;

@@ -12,8 +12,12 @@
         <div>
             <img src="../assets/exchange/player-join-text.png" alt="">
         </div>
-        <!-- <div>9/9</div> -->
-        <div>9人本</div>
+        <div>{{ joined.length }}/9</div>
+        <!-- <div>9人本</div> -->
+        <div class="online">
+            <div class="join" v-for="item in joined" :key="item">{{ item }}</div>
+            <div class="no-join" v-for="item in noJoined" :key="item">{{ item }}</div>
+        </div>
         <div class="start-game">
             <img @click="startGame()" src="../assets/exchange/play-game.png" alt="">
         </div>
@@ -23,7 +27,26 @@
 import ws from '../assets/websoket';
 export default {
     data() {
-        return {}
+        return {
+            roomInfo: {}
+        }
+    },
+    computed: {
+        joined: function () {
+            if (!this.roomInfo.joined) {
+                return [];
+            }
+            let data = this.roomInfo.joined.concat();
+            var index = data.indexOf('admin');
+            if (index > -1) {
+                data.splice(index, 1); 
+            }
+            return data;
+        },
+        noJoined() {
+            let arr = [ '觉觉', '飒飒', '霸霸', '玛玛', '臭臭', '蒂蒂', '野也', '帅帅', '宝宝'];
+            return arr.filter(item => this.joined.indexOf(item) == -1);
+        }
     },
     mounted() {
         this.initWs();
@@ -44,24 +67,35 @@ export default {
             sessionStorage.setItem('role', 'admin');
             if (ws.status) {
                 ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: ''}}));
-            } else {
-                ws.init(this.$route.params.roomid);
-                ws.onopen((e) => {
-                    console.log(e);
-                    ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: ''}}));
+                this.postGetRoomInfo();
+                ws.onmessage((e) => {
+                    this.onmessage(e)
                 });
-                ws.onmessage(
-                    (e) => {
-                        if(e.data_type === 'init') {
-                            if (e.success) {
-                                sessionStorage.setItem('role', "admin");
-                            } else {
-                                this.$message({message: e.message, type: 'error'})
-                            }   
-                        }
-                    }
-                );
+            } else {
+                ws.reload(this.$route.params.roomid, () => {
+                    this.postGetRoomInfo();
+                });
+                ws.onmessage((e) => {
+                    this.onmessage(e)
+                });
             }
+        },
+        onmessage(e) {
+            if(e.data_type === 'init') {
+                if (e.success) {
+                    sessionStorage.setItem('role', "admin");
+                } else {
+                    // this.$message({message: e.message, type: 'error'})
+                }   
+            }
+            if (e.data_type === 'room_info') {
+                if (e.success) {
+                    this.roomInfo = e.data;
+                }
+            }
+        },
+        postGetRoomInfo() {
+            ws.send(JSON.stringify({data_type: 'room_info', data: {}}));
         },
         startGame() {
             console.log('开始游戏');
@@ -134,13 +168,29 @@ export default {
             &:nth-child(3) {
                 margin-top: 10px;
             }
-            &:nth-child(4) {
-                margin-top: 80px;
+            &:last-child {
+                margin-top: 50px;
                 &.start-game {
                     img {
                         cursor: pointer;
                     }
                 }
+            }
+            &.online {
+                margin: 10px auto 0;
+                max-width: 300px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                > div {
+                    flex: 0 0 33.33%
+                }
+            }
+            .join {
+                color: rgb(92, 252, 0);
+            }
+            .no-join {
+                color: red;
             }
         }
     }

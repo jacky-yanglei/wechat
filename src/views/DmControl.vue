@@ -179,7 +179,7 @@ export default {
     },
     methods: {
         priceUp(radio) {
-            this.price = parseFloat((this.roomInfo.price * radio).toFixed(1));
+            this.price = parseFloat((this.roomInfo.price * radio).toFixed(2));
         },
         selectType(index) {
             this.exchangeType = index;
