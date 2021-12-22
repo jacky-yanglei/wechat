@@ -67,7 +67,7 @@
                         </el-input>
                         <i class="after">元</i>
                     </div>
-                    <div>当前价格：{{ roomInfo.price }}元</div>
+                    <div>当前价格：{{ roomInfo.price.toFixed(2) }}元</div>
                     <div class="fast-select">
                         <div @click="priceUp(1.1)" class="up">上涨 10%</div>
                         <div @click="priceUp(1.25)" class="up">上涨 25%</div>
