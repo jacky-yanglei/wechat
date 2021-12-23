@@ -17,7 +17,7 @@
                     <div>2、关闭交易后开始计算最终价，价格开始变动（如有需要，此时DM可以用调价功能修改最终价）</div>
                 </div>
                 <div>
-                    <img @click="dialogVisible = true" src="../assets/exchange/bang.png" alt="">
+                    <img @click="openRank()" src="../assets/exchange/bang.png" alt="">
                 </div>
                 <!-- <div class="open-price" style="opacity:0">
                     <img src="../assets/exchange/open-price.png" alt="">
@@ -130,6 +130,9 @@
         :modal-append-to-body="false"
         width="100%">
         <div>
+            <div>
+                <a @click="postAllUserInfo()" class="refresh-btn"><i class="el-icon-refresh-left"></i>刷新排行榜</a>
+            </div>
             <div class="item head">
                 <div>角色</div>
                 <div @click="orderByType = 'cash'">持有现金<i v-if="orderByType == 'cash'" class="el-icon-arrow-down el-icon--right"></i></div>
@@ -319,6 +322,13 @@ export default {
         this.initWs();
     },
     methods: {
+        openRank() {
+            this.postAllUserInfo();
+            this.dialogVisible = true;
+        },
+        postAllUserInfo() {
+            ws.send(JSON.stringify({data_type: 'all_user_info', data: null}));
+        },
         priceUp(radio) {
             this.price = parseFloat((this.roomInfo.price * radio).toFixed(2));
         },
@@ -510,6 +520,7 @@ export default {
         &.head {
             > div {
                 cursor: pointer;
+                margin-top: 10px;
             }
         }
     }
@@ -765,7 +776,14 @@ export default {
             }
         }
     }
-
+    ::v-deep .el-dialog__body {
+        padding-top: 0;
+    }
+    .refresh-btn {
+        cursor: pointer;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
 
 }
 </style>

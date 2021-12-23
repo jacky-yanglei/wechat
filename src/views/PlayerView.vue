@@ -9,7 +9,7 @@
         </div>
         <div class="role">
             <div>{{ currentRole }}</div>
-            <div @click="dialogVisible = true">排行榜</div>
+            <div @click="openRank()">排行榜</div>
         </div>
         <div class="marketvalue">
             <div>
@@ -109,6 +109,9 @@
         :modal-append-to-body="false"
         width="100%">
         <div>
+            <div>
+                <a @click="postAllUserInfo()" class="refresh-btn"><i class="el-icon-refresh-left"></i>刷新排行榜</a>
+            </div>
             <div class="item head">
                 <div>角色</div>
                 <div @click="orderByType = 'cash'">持有现金<i v-if="orderByType == 'cash'" class="el-icon-arrow-down el-icon--right"></i></div>
@@ -318,6 +321,10 @@ export default {
                 }
             }
         },
+        openRank() {
+            this.postAllUserInfo();
+            this.dialogVisible = true;
+        },
 
         // 撤单
         cancel() {
@@ -382,6 +389,10 @@ export default {
             this.exchangeType = index;
             this.amount = '';
             this.amountChange();
+        },
+
+        postAllUserInfo() {
+            ws.send(JSON.stringify({data_type: 'all_user_info', data: null}));
         },
         postGetUserInfo() {
             ws.send(JSON.stringify({data_type: 'user_info', data: {name: sessionStorage.getItem('role')}}));
@@ -592,6 +603,12 @@ export default {
         display: flex;
         justify-content: space-between;
         max-width: 400px;
+        &.head {
+            > div {
+                cursor: pointer;
+                margin-top: 10px;
+            }
+        }
     }
     &::v-deep input{
         font-size: 16px;
@@ -847,6 +864,14 @@ export default {
         > div {
             flex: 0 0 20%
         }
+    }
+    ::v-deep .el-dialog__body {
+        padding-top: 0;
+    }
+    .refresh-btn {
+        cursor: pointer;
+        font-size: 18px;
+        margin-bottom: 10px;
     }
     .btn {
         margin-top: 20px;
