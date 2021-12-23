@@ -16,6 +16,9 @@
                     <div>1、开启交易阶段不能调整价格</div>
                     <div>2、关闭交易后开始计算最终价，价格开始变动（如有需要，此时DM可以用调价功能修改最终价）</div>
                 </div>
+                <div>
+                    <img @click="dialogVisible = true" src="../assets/exchange/bang.png" alt="">
+                </div>
                 <!-- <div class="open-price" style="opacity:0">
                     <img src="../assets/exchange/open-price.png" alt="">
                 </div> -->
@@ -67,7 +70,8 @@
                         </el-input>
                         <i class="after">元</i>
                     </div>
-                    <div>当前价格：{{ roomInfo.price.toFixed(2) }}元</div>
+                    <div>最终价格：{{ roomInfo.price.toFixed(2) }}元</div>
+                    <div>当前价格：{{ currentPrice.toFixed(2) }}元</div>
                     <div class="fast-select">
                         <div @click="priceUp(1.1)" class="up">上涨 10%</div>
                         <div @click="priceUp(1.25)" class="up">上涨 25%</div>
@@ -118,6 +122,31 @@
                 </div>
             </div>
         </div>
+        <el-dialog
+        :custom-class="'dialog'"
+        title="玩家排行榜"
+        :visible.sync="dialogVisible"
+        :close-on-click-modal="false"
+        :modal-append-to-body="false"
+        width="100%">
+        <div>
+            <div class="item head">
+                <div>角色</div>
+                <div @click="orderByType = 'cash'">持有现金<i v-if="orderByType == 'cash'" class="el-icon-arrow-down el-icon--right"></i></div>
+                <div @click="orderByType = 'stock'">持股量<i v-if="orderByType == 'stock'" class="el-icon-arrow-down el-icon--right"></i></div>
+                <div @click="orderByType = 'marketValue'">总资产<i v-if="orderByType == 'marketValue'" class="el-icon-arrow-down el-icon--right"></i></div>
+            </div>
+            <div class="item" v-for="item in orderBy(userRank)" :key="item.value">
+                <div>{{ item.role }}</div>
+                <div>{{ numberTransform(item.cash) }}</div>
+                <div>{{ item.stock }}</div>
+                <div>{{ numberTransform(item.cash + item.stock * currentPrice) }}</div>
+            </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <img @click="dialogVisible = false" src="../assets/exchange/confirm-btn.png" alt="">
+        </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -130,10 +159,87 @@ export default {
             role: '觉觉', // 角色
             amount: '', // 数量
             price: '',
+            currentPrice: '',
             exchangeType: 0,
             mvp: '',
             mvpPhone: '',
             roomInfo: {},
+            dialogVisible: false,
+            orderByType: 'marketValue',
+            userRank: [
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "觉觉",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 100,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "飒飒",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "霸霸",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "玛玛",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "臭臭",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "蒂蒂",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 10000,
+                //     id: "55",
+                //     role: "野也",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "帅帅",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "宝宝",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+            ],
             roleOptions: [
                 {
                     value: '觉觉',
@@ -174,6 +280,41 @@ export default {
             ]
         }
     },
+    computed: {
+        numberTransform() {
+            return function(num) {
+                if (isNaN(parseFloat(num))) {
+                    return '--'
+                } else if (parseFloat(num) > 100000000) {
+                    return (parseFloat(num)/100000000).toFixed(2) + '亿元';
+                } else {
+                    return (parseFloat(num)/10000).toFixed(2) + '万元';
+                }
+            }
+        },
+        orderBy() {
+            return (list) => {
+                let arr = list.concat();
+                if (this.orderByType === 'marketValue') {
+                    arr.sort((a,b) => {
+                        return b.cash + b.stock * this.currentPrice - a.cash + a.stock * this.currentPrice; 
+                    })
+                    return arr
+                } else if (this.orderByType === 'cash') {
+                    arr.sort((a,b) => {
+                        return b.cash - a.cash;
+                    });
+                    return arr;
+                } else if (this.orderByType === 'stock') {
+                    arr.sort((a,b) => {
+                        return b.stock - a.stock;
+                    });
+                    return arr;
+                }
+                return arr;
+            }      
+        }
+    },
     mounted() {
         this.initWs();
     },
@@ -196,8 +337,6 @@ export default {
             ws.send(JSON.stringify({data_type: 'set_mvp', data: {name: this.mvp, phone: this.mvpPhone}}));
         },
         getCode() {
-            // console.log(this.$route.params.roomid)
-            // console.log(process.env.VUE_APP_Redirect)
             // eslint-disable-next-line no-undef
             new QRCode(this.$refs.qrcode, {
                 text: location.origin + process.env.VUE_APP_Redirect + "/playerLogin/" + this.$route.params.roomid,
@@ -271,6 +410,19 @@ export default {
                     this.$message({type: 'error', message: e.message});
                 }
             }
+            if (e.data_type === 'price_line') {
+                if (e.success) {
+                    this.setCurrentPrice(e.data);
+                }
+            }
+            if (e.data_type === 'all_user_info') {
+                if(e.success) {
+                    this.userRank = e.data;
+                }
+            }
+        },
+        setCurrentPrice(data) {
+            this.currentPrice = data.price;
         },
         postGetRoomInfo() {
             ws.send(JSON.stringify({data_type: 'room_info', data: {}}));
@@ -278,6 +430,9 @@ export default {
         getRoomInfo(data) {
             this.roomInfo = data;
             this.value = data.is_open_trade;
+            if(!this.currentPrice) {
+                this.currentPrice = this.roomInfo.price;
+            }
         },
         changeExchange(e) {
             ws.send(JSON.stringify({"data_type": 'trade_switch', data: e}));
@@ -327,6 +482,12 @@ export default {
     }
 }
 </script>
+<style lang="less">
+.dialog {
+    max-width: 500px;
+}
+</style>
+
 <style lang="less" scoped>
 .page {
     max-width: 750px;
@@ -336,7 +497,22 @@ export default {
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
-
+    .dialog-footer {
+        img {
+            cursor: pointer;
+        }
+    }
+    .item {
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        max-width: 400px;
+        &.head {
+            > div {
+                cursor: pointer;
+            }
+        }
+    }
     .change-status {
         .content {
             margin: -10px 0;
@@ -354,8 +530,14 @@ export default {
                         margin-right: 20px;
                     }
                 }
-                &:last-child {
+                &:nth-child(2) {
                     text-align: left;
+                }
+                &:nth-child(3) {
+                    margin-top: 20px;
+                    img {
+                        cursor: pointer;
+                    }
                 }
             }
             .open-price {

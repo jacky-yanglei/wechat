@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -36,8 +37,21 @@ export default {
     methods: {
         post() {
             this.postStatus = true;
-            this.$router.push('/lottery');
-            console.log('验证手机号');
+            if(this.phone) {
+                axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.phone}/check/`).then(({data}) => {
+                    if (data.status === 200) {
+                        if (!data.data.goods) {
+                            this.$router.push('/lottery/' + this.phone)
+                        } else {
+                            if (!data.data.is_sub_address) {
+                                this.$router.push('/setAddress/' + this.phone)
+                            }
+                        }
+                    } else {
+                        location.href = 'https://s.vchangyi.com/sI6';
+                    }
+                })
+            }
         }
     }
 }

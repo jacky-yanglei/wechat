@@ -8,7 +8,8 @@
 
         </div>
         <div class="role">
-            {{ currentRole }}
+            <div>{{ currentRole }}</div>
+            <div @click="dialogVisible = true">排行榜</div>
         </div>
         <div class="marketvalue">
             <div>
@@ -100,6 +101,31 @@
                 <img @click="cancel()" src="../assets/exchange/cancel-btn.png" alt="">
             </div>
         </div>
+        <el-dialog
+        :custom-class="'dialog'"
+        title="玩家排行榜"
+        :visible.sync="dialogVisible"
+        :close-on-click-modal="false"
+        :modal-append-to-body="false"
+        width="100%">
+        <div>
+            <div class="item head">
+                <div>角色</div>
+                <div @click="orderByType = 'cash'">持有现金<i v-if="orderByType == 'cash'" class="el-icon-arrow-down el-icon--right"></i></div>
+                <div @click="orderByType = 'stock'">持股量<i v-if="orderByType == 'stock'" class="el-icon-arrow-down el-icon--right"></i></div>
+                <div @click="orderByType = 'marketValue'">总资产<i v-if="orderByType == 'marketValue'" class="el-icon-arrow-down el-icon--right"></i></div>
+            </div>
+            <div class="item" v-for="item in orderBy(userRank)" :key="item.value">
+                <div>{{ item.role }}</div>
+                <div>{{ numberTransform(item.cash) }}</div>
+                <div>{{ item.stock }}</div>
+                <div>{{ numberTransform(item.cash + item.stock * currentPrice) }}</div>
+            </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <img @click="dialogVisible = false" src="../assets/exchange/confirm-btn.png" alt="">
+        </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -117,9 +143,87 @@ export default {
             priceList: [],
             openTrade: false,
             onTrading: false,
+            dialogVisible: false,
+            roomInfo: {
+            },
             userInfo: {
 
-            }
+            },
+            orderByType: 'marketValue',
+            userRank: [
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "觉觉",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 100,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "飒飒",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "霸霸",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "玛玛",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "臭臭",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "蒂蒂",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 10000,
+                //     id: "55",
+                //     role: "野也",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "帅帅",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+                // {
+                //     cash: 0,
+                //     id: "55",
+                //     role: "宝宝",
+                //     room_id: "89960",
+                //     shares: 0,
+                //     stock: 0,
+                // },
+            ],
         }
     },
     computed: {
@@ -129,6 +233,9 @@ export default {
         showPrice() {
             if (this.price) {
                 return this.price.toFixed(2)
+            }
+            if (this.roomInfo.price) {
+                return this.roomInfo.price.toFixed(2)
             }
             return '--';
         },
@@ -142,6 +249,28 @@ export default {
                     return (parseFloat(num)/10000).toFixed(2) + '万元';
                 }
             }
+        },
+        orderBy() {
+            return (list) => {
+                let arr = list.concat();
+                if (this.orderByType === 'marketValue') {
+                    arr.sort((a,b) => {
+                        return b.cash + b.stock * this.currentPrice - a.cash + a.stock * this.currentPrice; 
+                    })
+                    return arr
+                } else if (this.orderByType === 'cash') {
+                    arr.sort((a,b) => {
+                        return b.cash - a.cash;
+                    });
+                    return arr;
+                } else if (this.orderByType === 'stock') {
+                    arr.sort((a,b) => {
+                        return b.stock - a.stock;
+                    });
+                    return arr;
+                }
+                return arr;
+            }      
         }
     },
     watch: {
@@ -151,15 +280,6 @@ export default {
     },
     mounted() {
         this.initWs();
-        // setInterval(() => {
-        //     let price = Math.random(10) * 100;
-        //     this.getRoomInfo({
-        //         is_open_trade: false,
-        //         joined: ["admin", "觉觉"],
-        //         price: price,
-        //         price_line: [{price: price, time: 1640052517}]
-        //     })
-        // }, 1000)
     },
     methods: {
         initWs() {
@@ -251,6 +371,11 @@ export default {
                     this.getPriceChart(e.data);
                 }
             }
+            if (e.data_type === 'all_user_info') {
+                if(e.success) {
+                    this.userRank = e.data;
+                }
+            }
         },
         
         selectExchange(index) {
@@ -292,8 +417,7 @@ export default {
         },
         // 获取用户信息
         getRoomInfo(data) {
-            console.log('getRoomInfo');
-            
+            this.roomInfo = data;
             this.openTrade = data.is_open_trade;
         },
         updateChart(line) {
@@ -447,12 +571,28 @@ export default {
     }
 }
 </script>
+<style lang="less">
+.dialog {
+    max-width: 500px;
+}
+</style>
 <style lang="less" scoped>
 .page {
     max-width: 750px;
     margin: 0 auto;
     background-color: #CCB480;
     min-height: 100vh;
+    .dialog-footer {
+        img {
+            cursor: pointer;
+        }
+    }
+    .item {
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        max-width: 400px;
+    }
     &::v-deep input{
         font-size: 16px;
         background-color: #301802;
@@ -502,6 +642,11 @@ export default {
     .role {
         margin: 0 16px;
         padding: 10px 16px 0;
+        display: flex;
+        justify-content: space-between;
+        > div:last-child {
+            cursor: pointer;
+        }
     }
     .marketvalue {
         display: flex;

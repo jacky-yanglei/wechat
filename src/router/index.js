@@ -67,12 +67,12 @@ const routes = [
     component: CheckPhone
   },
   {
-    path: '/lottery',
+    path: '/lottery/:phone',
     name: 'lottery',
     component: lottoy
   },
   {
-    path: '/setAddress',
+    path: '/setAddress/:phone',
     name: 'setAddress',
     component: setAddress
   },

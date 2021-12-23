@@ -1,85 +1,136 @@
 <template>
-    <div>
-        <div class="lottery" ref="lottery">
-        <div class="lottery-block lottery-block1">
-            5折优惠券
+    <div class="page">
+        <div class="title"><img src="../assets/exchange/title.png" alt=""></div>
+        <div class="bg">
+            <div class="lottery" ref="lottery">
+                <div class="lottery-block lottery-block1 red">
+                    代金券
+                </div>
+                <div class="lottery-block lottery-block2">
+                    <!-- <div>手办</div>
+                    <div>+</div>
+                    <div>瓜子盲盒</div> -->
+                    IPhone
+                </div>
+                <div class="lottery-block lottery-block3 red">
+                    <div>纯黄金瓜子</div>
+                    <div>+</div>
+                    <div>手办盲盒</div>
+                </div>
+                <div class="lottery-block lottery-block4">
+                    瓜子盲盒
+                </div>
+                <div class="lottery-block lottery-block12">
+                    手办盲盒
+                </div>
+                <div class="lottery-block"></div>
+                <div class="lottery-block"></div>
+                <div class="lottery-block lottery-block5 red">代金券</div>
+                <div class="lottery-block lottery-block11 red">代金券</div>
+                <div class="lottery-block"></div>
+                <div class="lottery-block"></div>
+                <div class="lottery-block lottery-block6">手办盲盒</div>
+                <div class="lottery-block lottery-block10">瓜子盲盒</div>
+                <div class="lottery-block lottery-block9 red">
+                    <div>纯黄金瓜子</div>
+                    <div>+</div>
+                    <div>手办盲盒</div>
+                </div>
+                <div class="lottery-block lottery-block8">
+                    <!-- <div>手办</div>
+                    <div>+</div>
+                    <div>瓜子盲盒</div> -->
+                    IPhone
+                </div>
+                <div class="lottery-block lottery-block7 red">代金券</div>
+                <div class="center-btn">
+                    <button class="btn" @click="todo()">抽奖</button>
+                </div>
+            </div>
         </div>
-        <div class="lottery-block lottery-block2">
-            <div>手办</div>
-            <div>+</div>
-            <div>瓜子盲盒</div>
+        <div class="tips">
+            <div>淘“金”盲盒</div>
+            <div>iPhone手机、真金瓜子&手办盲盒、手办盲盒、洽洽瓜子礼包、五折代金券，哪一个将是你带回去的宝藏呢！</div>
+            <div>百分百中奖，活动期至2022年2月28日，宝藏有限，抽完即止。</div>
+            <div>活动解释权归壹直爽发行所有。</div>
+            <div>小红书or微博发布#剧本杀、嗑洽洽话题，就有机会获得由洽洽瓜子提供的拍立得&瓜子礼包、大肚杯&瓜子礼包，活动期至2022年2月28日，活动解释权归洽洽瓜子所有。</div>
         </div>
-        <div class="lottery-block lottery-block3">
-            IPhone
-        </div>
-        <div class="lottery-block lottery-block4">
-            5折优惠券
-        </div>
-        <div class="lottery-block lottery-block12">
-            瓜子盲盒
-        </div>
-        <div class="lottery-block"></div>
-        <div class="lottery-block"></div>
-        <div class="lottery-block lottery-block5">手办盲盒</div>
-        <div class="lottery-block lottery-block11">手办盲盒</div>
-        <div class="lottery-block"></div>
-        <div class="lottery-block"></div>
-        <div class="lottery-block lottery-block6">瓜子盲盒</div>
-        <div class="lottery-block lottery-block10">5折优惠券</div>
-        <div class="lottery-block lottery-block9">
-            IPhone
-        </div>
-        <div class="lottery-block lottery-block8">
-            <div>手办</div>
-            <div>+</div>
-            <div>瓜子盲盒</div>
-        </div>
-        <div class="lottery-block lottery-block7">5折优惠券</div>
-        <div class="center-btn">
-            <button class="btn" @click="todo()">抽奖</button>
-        </div>
-    </div>
     </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
             price: [
-                '5折优惠券',
-                '手办+瓜子盲盒',
-                'IPhone',   
-                '5折优惠券',
-                '手办盲盒',
-                '瓜子盲盒',
-                '5折优惠券',
-                '手办+瓜子盲盒',
+                '代金券',
                 'IPhone',
-                '5折优惠券',
+                '纯黄金瓜子+手办盲盒',
+                '瓜子盲盒',
+                '代金券',
                 '手办盲盒',
-                '瓜子盲盒'
+                '代金券',
+                'IPhone',
+                '纯黄金瓜子+手办盲盒',
+                '瓜子盲盒',
+                '代金券',
+                '手办盲盒'
             ]
         }
     },
+    computed: {
+        goods: function() {
+            return function(id) {
+                if (id == 1) {
+                    return 2
+                }
+                if (id == 2) {
+                    return 3
+                }
+                if (id == 3) {
+                    return 4
+                }
+                if (id == 4) {
+                    return 6
+                }
+                if (id == 5) {
+                    return 1
+                }
+                return 11;
+            }
+        }
+    },
+    mounted() {
+    },
     methods: {
         todo() {
-            this.lottery(this.$refs.lottery,
-            {
-                winner: 11, // 中奖项 必传
-                price: this.price, // 奖品列表 非必传
-                callback: (index) => {
-                    this.$alert(`抽中 ${ this.price[index-1] }`, '恭喜您', {
-                        confirmButtonText: '去领奖',
-                        callback: () => {
-                            if (index === 1 || index === 4 || index === 7 || index === 10) {
-                                location.href = 'https://s.vchangyi.com/sI6';
-                            } else {
-                                this.$router.push('/setAddress')
-                            }
-                        }
-                    });
-                } // 抽奖转完之后的回调方法
-            });
+            axios.put(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/draw/`).then(({data}) => {
+                if (data.status !== 200) {
+                    location.href = 'https://s.vchangyi.com/sI6';
+                } else {
+                    if (data.status === 200) {
+                        let winner = this.goods(data.data.id);
+                        this.lottery(this.$refs.lottery,
+                        {
+                            winner: winner, // 中奖项 必传
+                            price: this.price, // 奖品列表 非必传
+                            callback: (index) => {
+                                this.$alert(`抽中 ${ this.price[index-1] }`, '恭喜您', {
+                                    confirmButtonText: '去领奖',
+                                    callback: () => {
+                                        if (winner == 1 || winner == 11) {
+                                            location.href = 'https://s.vchangyi.com/sI6';
+                                        } else {
+                                            this.$router.push('/setAddress/' + this.$route.params.phone);
+                                        }
+                                    }
+                                });
+                            } // 抽奖转完之后的回调方法
+                        });
+                    }
+                }
+                
+            })
         },
         lottery(elem, option) {
             option.winner = parseInt(option.winner);
@@ -95,10 +146,10 @@ export default {
             elem.priceArr = option.price || [1,2,3,4,5,6,7,8,9,0,11,12];
             elem.IntervalIndex = 0;
             var fastCircle = 3;
-            var fastSpeed = 20;
+            var fastSpeed = 60;
             var fastCount = 0;
             var slowCircle = 2;
-            var slowSpeed = 40;
+            var slowSpeed = 120;
             var slowCount = 0;
             elem.resultSpeed = [];
             for (var i = 0; i < elem.priceArr.length; i++) {
@@ -125,7 +176,6 @@ export default {
                 for (let i = 0; i < block.length;i++) {
                     block[i].classList.remove('active');
                 }
-                // elem.getElementsByClassName('.lottery-block').removeClass('active');
                 if (elem.IntervalIndex === elem.priceArr.length) {
                     elem.IntervalIndex = -1;
                 }
@@ -133,8 +183,6 @@ export default {
                 if (elem.getElementsByClassName('lottery-block' + (elem.IntervalIndex+1)).length > 0) {
                     elem.getElementsByClassName('lottery-block' + (elem.IntervalIndex+1))[0].classList.add('active');
                 }
-                // elem.getElementsByClassName('lottery-block' + (elem.IntervalIndex+1))[0].classList.add('active');
-                // elem.find('.lottery-block' + (elem.IntervalIndex+1)).addClass('active');
             };
             elem.resultFun = function () {
                 var Arr = elem.resultSpeed;
@@ -143,7 +191,7 @@ export default {
                     setTimeout(function () {
                         _that.activeFun();
                         if (i === Arr.length - 1) {
-                            setTimeout(option.callback(option.winner),200);
+                            setTimeout(option.callback(option.winner), 300);
                         }
                     }(i), Arr[i]);
                 }
@@ -153,25 +201,57 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    * {
-        margin: 0;
-        padding: 0;
+    .page {
+        min-height: 100vh;
+        max-width: 750px;
+        margin: 0 auto;
+        background-image: url('/ddd/static/images/exchange/bg.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #272828;
+        padding: 0 15px;
+        padding-top: 20px;
+        box-sizing: border-box;
+        .title {
+            padding-top: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tips {
+            margin-top: 20px;
+            color: #fff;
+            font-size: 14px;
+        }
+    }
+    .bg {
+        margin: 0 auto;
+        width: 320px;
+        height: 290px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url('../assets/exchange/lotterybg.png')
     }
     .lottery {
-        width: 100%;
-        max-width: 400px;
+        width: 280px;
+        // max-width: 400px;
         margin: 0 auto;
-        height: 300px;
+        height: 250px;
         // background-color: #5fafea;
         display: flex;
         flex-wrap: wrap;
         position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        background-color: #F84B4F;
+        font-size: 14px;
+        color: white;
     }
     .lottery .lottery-block {
         width: 25%;
         height: 25%;
-        background-color: rgba(255, 0, 0, 0.38);
-        border: 1px solid silver;
+        // background-color: #ff000061;
+        // border: 1px solid silver;
         box-sizing: border-box;
         display: flex;
         justify-content: center;
@@ -179,22 +259,33 @@ export default {
         flex-direction: column;
         line-height: 16px;
     }
-    .lottery .lottery-block.active {
-        background-color: red;
+    .lottery .lottery-block.red {
+        background-color: #FF9EA2;
+    }
+    .lottery .lottery-block.active, .lottery .lottery-block.red.active {
+        background-color: #C13538;
     }
     .lottery .center-btn {
         position: absolute;
         width: 50%;
         height: 50%;
         // background-color: rgba(255, 255, 0, 0.58);
-        background-color: white;
+        background-color: #ff644f;
         top: 25%;
         left: 25%;
         display: flex;
         justify-content: center;
         align-items: center;
+        border-radius: 16px;
     }
     .lottery .center-btn button {
-        padding: 20px 50px;
+        padding: 20px;
+        background: #F2E2B4;
+        border: 2px solid #FF8B49;
+        box-sizing: border-box;
+        border-radius: 8px;
+        color: #F84A4E;
+        font-size: 20px;
+        font-family: '优设标题黑';
     }
 </style>

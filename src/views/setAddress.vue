@@ -39,7 +39,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -55,35 +55,18 @@ export default {
             if (!this.valid()) {
                 return;
             }
-            this.$alert('地址已提交，您可以关闭页面，等待收货啦！', '提示', {
-                confirmButtonText: '确定',
-            })
-            // axios.post(
-            //     process.env.VUE_APP_BASE_URL+ 'script/register/' + this.$route.params.id,
-            //     {
-            //         "name": this.name,
-            //         "store_name": this.store,
-            //         "phone": this.phone,
-            //         "address": this.address,
-            //         "password": this.password,
-            //     }
-            // ).then(({data}) => {
-            //     if(data.status === 200) {
-            //         // this.$router.push('/ActiveSuccess');
-            //         this.$alert('激活成功', '提示', {
-            //             confirmButtonText: '确定',
-            //             type: 'success',
-            //             showClose: false,
-            //             callback: () => {
-            //                 this.$router.push('/dmlogin');
-            //             }
-            //         });
-            //     } else {
-            //         this.$message('注册失败');
-            //     }
-            // }).catch(() => {
-            //     this.$message('注册失败');
-            // })
+            axios.put(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/address/`, 
+            {
+                name: this.name,
+                recv_phone: this.phone,
+                address_details: this.address,
+            }).then(({data}) => {
+                if (data.status == 200) {
+                    this.$alert('地址已提交，您可以关闭页面，等待收货啦！', '提示', {
+                        confirmButtonText: '确定',
+                    });
+                }
+            });
         },
         valid() {
             if (
