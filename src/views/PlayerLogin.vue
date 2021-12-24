@@ -13,6 +13,7 @@
                         </el-input>
                     </div>
                     <div class="error-text" v-if="postStatus && !phone">手机号不能为空</div>
+                    <div class="tips">(手机号是领奖唯一凭证，请务必仔细录入)</div>
                 </div>
                 <div>
                     <div>选择人物</div>
@@ -129,6 +130,10 @@ export default {
     background-repeat: no-repeat;
     background-color: #272828;
     padding: 0 15px;
+    .tips {
+        font-size: 14px;
+        margin-top: 10px;
+    }
     .el-select {
         width: 100%;
     }

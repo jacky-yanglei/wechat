@@ -112,10 +112,10 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div>录入手机号</div>
+                    <!-- <div>录入手机号</div>
                     <div>
                         <el-input v-model="mvpPhone"></el-input>
-                    </div>
+                    </div> -->
                     <div class="confirm-btn">
                         <img @click="mvpPost()" src="../assets/exchange/confirm-btn.png" alt="">
                     </div>
@@ -344,7 +344,7 @@ export default {
             }
         },
         mvpPost() {
-            ws.send(JSON.stringify({data_type: 'set_mvp', data: {name: this.mvp, phone: this.mvpPhone}}));
+            ws.send(JSON.stringify({data_type: 'set_mvp', data: {name: this.mvp}}));
         },
         getCode() {
             // eslint-disable-next-line no-undef
