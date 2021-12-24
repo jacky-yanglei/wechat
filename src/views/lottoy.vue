@@ -105,31 +105,26 @@ export default {
     methods: {
         todo() {
             axios.put(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/draw/`).then(({data}) => {
-                if (data.status !== 200) {
-                    location.href = 'https://s.vchangyi.com/sI6';
-                } else {
-                    if (data.status === 200) {
-                        let winner = this.goods(data.data.id);
-                        this.lottery(this.$refs.lottery,
-                        {
-                            winner: winner, // 中奖项 必传
-                            price: this.price, // 奖品列表 非必传
-                            callback: (index) => {
-                                this.$alert(`抽中 ${ this.price[index-1] }`, '恭喜您', {
-                                    confirmButtonText: '去领奖',
-                                    callback: () => {
-                                        if (winner == 1 || winner == 11) {
-                                            location.href = 'https://s.vchangyi.com/sI6';
-                                        } else {
-                                            this.$router.push('/setAddress/' + this.$route.params.phone);
-                                        }
+                if (data.status === 200) {
+                    let winner = this.goods(data.data.id);
+                    this.lottery(this.$refs.lottery,
+                    {
+                        winner: winner, // 中奖项 必传
+                        price: this.price, // 奖品列表 非必传
+                        callback: (index) => {
+                            this.$alert(`抽中 ${ this.price[index-1] }`, '恭喜您', {
+                                confirmButtonText: '去领奖',
+                                callback: () => {
+                                    if (winner == 1 || winner == 11) {
+                                        location.href = 'https://s.vchangyi.com/sI6';
+                                    } else {
+                                        this.$router.push('/setAddress/' + this.$route.params.phone);
                                     }
-                                });
-                            } // 抽奖转完之后的回调方法
-                        });
-                    }
+                                }
+                            });
+                        } // 抽奖转完之后的回调方法
+                    });
                 }
-                
             })
         },
         lottery(elem, option) {

@@ -40,15 +40,37 @@ export default {
             if(this.phone) {
                 axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.phone}/check/`).then(({data}) => {
                     if (data.status === 200) {
-                        if (!data.data.goods) {
-                            this.$router.push('/lottery/' + this.phone)
-                        } else {
-                            if (!data.data.is_sub_address) {
-                                this.$router.push('/setAddress/' + this.phone)
-                            }
+                        if (!data.data.played) {
+                            this.$alert('对不起，你还未玩过DDD2，不能参与抽奖/领券', '提示', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                showClose: false,
+                                callback: () => {
+                                }
+                            });
+                            return;
                         }
-                    } else {
-                        location.href = 'https://s.vchangyi.com/sI6';
+                        if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
+                            this.$router.push('/lottery/' + this.phone)
+                            return;
+                        }
+                        if(data.data.played&&!data.data.is_mvp&&!data.data.ticket) {
+                            location.href = 'https://s.vchangyi.com/sI6';
+                            return;
+                        }
+                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
+                            this.$router.push('/setAddress/' + this.phone)
+                            return;
+                        }
+                        if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address) || (data.data.played&&!data.data.is_mvp&&!data.data.ticket)) {
+                            this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
+                                confirmButtonText: '确定',
+                                type: 'error',
+                                showClose: false,
+                                callback: () => {
+                                }
+                            });
+                        }
                     }
                 })
             }
