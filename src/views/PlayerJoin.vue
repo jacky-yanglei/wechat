@@ -66,7 +66,7 @@ export default {
         initWs() {
             sessionStorage.setItem('role', 'admin');
             if (ws.status) {
-                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: ''}}));
+                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: '', check_token: sessionStorage.getItem('token')}}));
                 this.postGetRoomInfo();
                 ws.onmessage((e) => {
                     this.onmessage(e)
@@ -85,12 +85,23 @@ export default {
                 if (e.success) {
                     sessionStorage.setItem('role', "admin");
                 } else {
-                    // this.$message({message: e.message, type: 'error'})
+                    this.$message({message: e.message, type: 'error'})
                 }   
             }
             if (e.data_type === 'room_info') {
                 if (e.success) {
                     this.roomInfo = e.data;
+                }
+            }
+            if (e.data_type === 'check_token') {
+                if(!e.success) {
+                    this.$alert(`${e.message}`, '提示', {
+                        type: 'error',
+                        confirmButtonText: '确定',
+                        callback: () => {
+                            this.$router.push('/dmlogin');
+                        }
+                    });
                 }
             }
         },

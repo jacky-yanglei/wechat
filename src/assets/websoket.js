@@ -32,7 +32,16 @@ class joinRoomWs {
         this.init(roomId);
         this.onopen(() => {
             if (sessionStorage.getItem('role')) {
-                this.send(JSON.stringify({data_type: 'init', data: {name: sessionStorage.getItem('role'), phone: sessionStorage.getItem('phone') || ''}}))
+                let data = {
+                    name: sessionStorage.getItem('role'), 
+                    phone: sessionStorage.getItem('phone') || '',
+                };
+                if (data.name === 'admin') {
+                    data.token = sessionStorage.getItem('token');
+                }
+                this.send(
+                    JSON.stringify({
+                        data_type: 'init', data: data }))
                 if (callback) {
                     callback();
                 }

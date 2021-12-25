@@ -430,6 +430,17 @@ export default {
                     this.userRank = e.data;
                 }
             }
+            if (e.data_type === 'check_token') {
+                if(!e.success) {
+                    this.$alert(`${e.message}`, '提示', {
+                        type: 'error',
+                        confirmButtonText: '确定',
+                        callback: () => {
+                            this.$router.push('/dmlogin');
+                        }
+                    });
+                }
+            }
         },
         setCurrentPrice(data) {
             this.currentPrice = data.price;

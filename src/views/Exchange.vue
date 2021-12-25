@@ -51,7 +51,7 @@ export default {
                     localStorage.setItem('token', data.data.new_token)
                     this.tokenStatusLoading = true;
                 } else {
-                    this.$router.push('/login');
+                    this.$router.push('/dmlogin');
                 }
             }).catch(() => {
                 this.checkToken();
