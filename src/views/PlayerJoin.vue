@@ -66,7 +66,7 @@ export default {
         initWs() {
             sessionStorage.setItem('role', 'admin');
             if (ws.status) {
-                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: '', check_token: sessionStorage.getItem('token')}}));
+                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: '', check_token: localStorage.getItem('token')}}));
                 this.postGetRoomInfo();
                 ws.onmessage((e) => {
                     this.onmessage(e)

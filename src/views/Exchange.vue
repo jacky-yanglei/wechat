@@ -74,7 +74,7 @@ export default {
                 if(data.status === 200) {
                     this.$router.push('/playerJoin/' + data.data.room_id)
                 } else {
-                    this.$message({message: '网络异常，创建失败', type: 'error'});
+                    this.$message({message: data.message, type: 'error'});
                 }
             }).catch(() => {
                 this.$message({message: '网络异常，创建失败', type: 'error'});

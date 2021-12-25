@@ -59,10 +59,10 @@ export default {
                     localStorage.setItem('token', data.data.token)
                     this.$router.push('/home');
                 } else {
-                    this.$message({message: '登陆失败', type: 'error'});
+                    this.$message({message: '登录失败', type: 'error'});
                 }
             }).catch(() => {
-                this.$message({message: '登陆失败', type: 'error'});
+                this.$message({message: '登录失败', type: 'error'});
             })
         },
         valid() {

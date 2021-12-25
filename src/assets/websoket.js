@@ -37,7 +37,7 @@ class joinRoomWs {
                     phone: sessionStorage.getItem('phone') || '',
                 };
                 if (data.name === 'admin') {
-                    data.token = sessionStorage.getItem('token');
+                    data.token = localStorage.getItem('token');
                 }
                 this.send(
                     JSON.stringify({
