@@ -49,11 +49,13 @@
             </div>
         </div>
         <div class="tips">
-            <div>淘“金”盲盒</div>
-            <div>iPhone手机、真金瓜子&手办盲盒、手办盲盒、洽洽瓜子礼包、五折代金券，哪一个将是你带回去的宝藏呢！</div>
-            <div>百分百中奖，活动期至2022年2月28日，宝藏有限，抽完即止。</div>
-            <div>活动解释权归壹直爽发行所有。</div>
-            <div>小红书or微博发布#剧本杀、嗑洽洽话题，就有机会获得由洽洽瓜子提供的拍立得&瓜子礼包、大肚杯&瓜子礼包，活动期至2022年2月28日，活动解释权归洽洽瓜子所有。</div>
+            <div>#有奖话题#</div>
+            <div>小红书or微博发布 玩吨2+嗑瓜子的场景</div>
+            <div>关注 洽洽 并@洽洽 带话题#剧本杀，嗑洽洽</div>
+            <div>（微博：洽洽坚果；小红书：洽洽）</div>
+            <div>就有机会获得由洽洽瓜子提供的</div>
+            <div>“拍立得&9口味洽洽瓜子大礼包”</div>
+            <div>“大肚杯&9口味洽洽瓜子大礼包”</div>
         </div>
     </div>
 </template>
@@ -213,9 +215,10 @@ export default {
             margin-bottom: 20px;
         }
         .tips {
-            margin-top: 20px;
+            width: 320px;
             color: #fff;
             font-size: 14px;
+            margin: 20px auto 0;
         }
     }
     .bg {
