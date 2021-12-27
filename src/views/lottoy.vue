@@ -126,6 +126,14 @@ export default {
                             });
                         } // 抽奖转完之后的回调方法
                     });
+                } else {
+                    this.$alert(data.message, '提示', {
+                        confirmButtonText: '确定',
+                        type: 'error',
+                        showClose: false,
+                        callback: () => {
+                        }
+                    });
                 }
             })
         },

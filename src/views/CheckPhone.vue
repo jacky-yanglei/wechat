@@ -41,7 +41,7 @@ export default {
                 axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.phone}/check/`).then(({data}) => {
                     if (data.status === 200) {
                         if (!data.data.played) {
-                            this.$alert('对不起，你还未玩过DDD2，不能参与抽奖/领券', '提示', {
+                            this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖/领券', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
                                 showClose: false,
