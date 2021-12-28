@@ -119,7 +119,7 @@
                 <div @click="orderByType = 'marketValue'">总资产<i v-if="orderByType == 'marketValue'" class="el-icon-arrow-down el-icon--right"></i></div>
             </div>
             <div class="item" v-for="item in orderBy(userRank)" :key="item.value">
-                <div>{{ item.role }}</div>
+                <div :class="joined(item.role)?'green':'red'">{{ item.role }}</div>
                 <div>{{ numberTransform(item.cash) }}</div>
                 <div>{{ item.stock }}</div>
                 <div>{{ numberTransform(item.cash + item.stock * currentPrice) }}</div>
@@ -251,6 +251,20 @@ export default {
                 } else {
                     return (parseFloat(num)/10000).toFixed(2) + '万元';
                 }
+            }
+        },
+        joined() {
+            return (name) => {
+                let list = [];
+                if (this.roomInfo?.joined) {
+                    let data = this.roomInfo.joined.concat();
+                    var index = data.indexOf('admin');
+                    if (index > -1) {
+                        data.splice(index, 1); 
+                    }
+                    list = data;
+                }
+                return list.indexOf(name) > -1;
             }
         },
         orderBy() {
@@ -430,6 +444,12 @@ export default {
         getRoomInfo(data) {
             this.roomInfo = data;
             this.openTrade = data.is_open_trade;
+            if (!this.price) {
+                this.price = this.roomInfo?.price;
+            }
+            if(!this.currentPrice) {
+                this.currentPrice = this.roomInfo.price;
+            }
         },
         updateChart(line) {
             if (this.chart.series[0].data.length > 200) {
@@ -601,12 +621,43 @@ export default {
     .item {
         margin: 0 auto;
         display: flex;
-        justify-content: space-between;
+        > div {
+            flex: 0 0 25%;
+            text-align: center;
+        }
         max-width: 400px;
         &.head {
             > div {
                 cursor: pointer;
                 margin-top: 10px;
+            }
+        }
+        .green {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &::before {
+                content: "";
+                display: flex;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: rgb(92, 252, 0);
+                margin-right: 5px;
+            }
+        }
+        .red {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &::before {
+                content: "";
+                display: flex;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: red;
+                margin-right: 5px;
             }
         }
     }
@@ -896,6 +947,11 @@ export default {
         img {
             cursor: pointer;
             vertical-align: middle;
+        }
+    }
+    ::v-deep {
+        .el-dialog {
+            background-color: #CCB480;
         }
     }
 }

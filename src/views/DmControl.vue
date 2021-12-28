@@ -34,7 +34,7 @@
                     <span>价格控制</span>
                 </div>
                 <div @click="selectTab(3)" :class="tabIndex === 3?'active':''"><img class="channel" src="../assets/exchange/minicode.png" alt=""></div>
-                <div @click="selectTab(4)" :class="tabIndex === 4?'active':''">MVP</div>
+                <div @click="selectTab(4)" :class="tabIndex === 4?'active':''">设置</div>
             </div>
             <div class="content">
                 <div v-if="tabIndex === 1" class="section1">
@@ -70,17 +70,18 @@
                         </el-input>
                         <i class="after">元</i>
                     </div>
-                    <div>最终价格：{{ roomInfo.price.toFixed(2) }}元</div>
+                    <div>上一次价格：{{ (roomInfo.last_price?roomInfo.last_price:roomInfo.price).toFixed(2) }}元</div>
                     <div>当前价格：{{ currentPrice.toFixed(2) }}元</div>
+                    <div>最终价格：{{ roomInfo.price.toFixed(2) }}元</div>
                     <div class="fast-select">
                         <div @click="priceUp(1.1)" class="up">上涨 10%</div>
-                        <div @click="priceUp(1.25)" class="up">上涨 25%</div>
-                        <div @click="priceUp(1.75)" class="up">上涨 75%</div>
-                        <div @click="priceUp(2)" class="up">上涨 100%</div>
+                        <div @click="priceUp(1.25)" class="up">上涨 20%</div>
+                        <!-- <div @click="priceUp(1.75)" class="up">上涨 75%</div>
+                        <div @click="priceUp(2)" class="up">上涨 100%</div> -->
                         <div @click="priceUp(0.9)" class="down">下跌 10%</div>
-                        <div @click="priceUp(0.75)" class="down">下跌 25%</div>
-                        <div @click="priceUp(0.25)" class="down">下跌 75%</div>
-                        <div @click="priceUp(0.01)" class="down">下跌 99%</div>
+                        <div @click="priceUp(0.8)" class="down">下跌 20%</div>
+                        <!-- <div @click="priceUp(0.25)" class="down">下跌 75%</div>
+                        <div @click="priceUp(0.01)" class="down">下跌 99%</div> -->
                     </div>
                     <div class="confirm-btn" @click="setPrice()">
                         <img src="../assets/exchange/confirm-btn.png" alt="">
@@ -112,13 +113,12 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <!-- <div>录入手机号</div>
-                    <div>
-                        <el-input v-model="mvpPhone"></el-input>
-                    </div> -->
                     <div class="confirm-btn">
                         <img @click="mvpPost()" src="../assets/exchange/confirm-btn.png" alt="">
                     </div>
+                    <!-- <div class="confirm-btn">
+                        <img @click="closeRoom()" src="../assets/exchange/close-room.png" alt="">
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@
                 <div @click="orderByType = 'marketValue'">总资产<i v-if="orderByType == 'marketValue'" class="el-icon-arrow-down el-icon--right"></i></div>
             </div>
             <div class="item" v-for="item in orderBy(userRank)" :key="item.value">
-                <div>{{ item.role }}</div>
+                <div :class="joined(item.role)?'green':'red'">{{ item.role }}</div>
                 <div>{{ numberTransform(item.cash) }}</div>
                 <div>{{ item.stock }}</div>
                 <div>{{ numberTransform(item.cash + item.stock * currentPrice) }}</div>
@@ -154,6 +154,7 @@
 </template>
 <script>
 import ws from '../assets/websoket';
+// import axios from 'axios';
 export default {
     data() {
         return {
@@ -170,78 +171,6 @@ export default {
             dialogVisible: false,
             orderByType: 'marketValue',
             userRank: [
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "觉觉",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 100,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "飒飒",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "霸霸",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "玛玛",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "臭臭",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "蒂蒂",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 10000,
-                //     id: "55",
-                //     role: "野也",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "帅帅",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "宝宝",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
             ],
             roleOptions: [
                 {
@@ -293,6 +222,20 @@ export default {
                 } else {
                     return (parseFloat(num)/10000).toFixed(2) + '万元';
                 }
+            }
+        },
+        joined() {
+            return (name) => {
+                let list = [];
+                if (this.roomInfo?.joined) {
+                    let data = this.roomInfo.joined.concat();
+                    var index = data.indexOf('admin');
+                    if (index > -1) {
+                        data.splice(index, 1); 
+                    }
+                    list = data;
+                }
+                return list.indexOf(name) > -1;
             }
         },
         orderBy() {
@@ -436,6 +379,8 @@ export default {
                         type: 'error',
                         confirmButtonText: '确定',
                         callback: () => {
+                            ws.focusClose = true;
+                            ws.WebSocket.close();
                             this.$router.push('/dmlogin');
                         }
                     });
@@ -497,9 +442,35 @@ export default {
                 this.$message({message: data.message, type: 'success'})
             } else {
                 this.$message({message: data.message, type: 'error'})
-            }
+            }   
+        },
+        // closeRoom() {
+        //     this.$confirm('您确定要关闭此房间?', '提示', {
+        //         confirmButtonText: '确定',
+        //         cancelButtonText: '取消',
+        //         closeOnClickModal: false,
+        //         type: 'warning'
+        //     }).then(() => {
+        //         axios.delete(
+        //             process.env.VUE_APP_BASE_URL+ 'room/' + this.$route.params.roomid,
+        //             {
+        //                 headers: {
+        //                     Authorization: 'Bearer ' + localStorage.getItem('token')
+        //                 }
+        //             }
+        //         ).then(({data}) => {
+        //             if(data.status === 200) {
+        //                 location.href = '/ddd/dmlogin';
+        //             } else {
+        //                 this.$message({message: data.message, type: 'error'});
+        //             }
+        //         }).catch(() => {
+        //             this.$message({message: '网络异常', type: 'error'});
+        //         });
+        //     }).catch(() => {  
+        //     });
             
-        }
+        // }
     }
 }
 </script>
@@ -526,12 +497,43 @@ export default {
     .item {
         margin: 0 auto;
         display: flex;
-        justify-content: space-between;
+        > div {
+            flex: 0 0 25%;
+            text-align: center;
+        }
         max-width: 400px;
         &.head {
             > div {
                 cursor: pointer;
                 margin-top: 10px;
+            }
+        }
+        .green {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &::before {
+                content: "";
+                display: flex;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: rgb(92, 252, 0);
+                margin-right: 5px;
+            }
+        }
+        .red {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &::before {
+                content: "";
+                display: flex;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background-color: red;
+                margin-right: 5px;
             }
         }
     }
@@ -795,6 +797,11 @@ export default {
         font-size: 18px;
         margin-bottom: 10px;
     }
-
+    ::v-deep {
+        .el-dialog {
+            background-color: #CCB480;
+        }
+    }
+// #CCB480
 }
 </style>

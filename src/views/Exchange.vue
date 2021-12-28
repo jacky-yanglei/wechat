@@ -6,6 +6,9 @@
         <div class="key">
             <img src="../assets/exchange/key.png" alt="">
             <div>
+                <div class="btn" v-if="$route.params.id">
+                    <img @click="backRoom()" src="../assets/exchange/back-room.png" alt="">
+                </div>
                 <div class="btn">
                     <img @click="getCode()" src="../assets/exchange/create-btn.png" alt="">
                 </div>
@@ -13,11 +16,16 @@
                     <div>
                         文字说明:
                     </div>
-                    <p>1、DM创建好房间后,将二维码给玩家扫码</p>
+                    <p>1、DM创建好房间后，将二维码给玩家扫码</p>
                     <p>2、DM在游戏中可以接受玩家的入金和出金请求</p>
                     <p>3、完成游戏后，DM需要录入谁是MVP并告诉玩家MVP可以抽奖，其他玩家可以领取洽洽瓜子优惠券</p>
                 </div>
             </div>
+        </div>
+        <div class="jiang">
+            <div><img v-if="!!appJiang[0]" @click="getJiang(0)" src="../assets/exchange/redbag110.png" alt=""></div>
+            <div><img v-if="!!appJiang[1]" @click="getJiang(1)" src="../assets/exchange/redbag200.png" alt=""></div>
+            <div><img v-if="!!appJiang[2]" @click="getJiang(2)" src="../assets/exchange/redbag300.png" alt=""></div>
         </div>
     </div>
 </template>
@@ -27,11 +35,20 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            tokenStatusLoading: false
+            tokenStatusLoading: false,
+            appJiang: null,
+            jiangList: [
+                'https://s.vchangyi.com/sJz',
+                'https://s.vchangyi.com/sJE',
+                'https://s.vchangyi.com/sJp'
+            ],
         }
     },
+    computed: {
+    },
     created() {
-        this.checkToken()
+        this.checkToken();
+        this.appJiang = JSON.parse(sessionStorage.getItem('jiang')??JSON.stringify([1,1,1]));
     },
     mounted() {
     },
@@ -56,6 +73,32 @@ export default {
             }).catch(() => {
                 this.checkToken();
             })
+        },
+        backRoom() {
+            this.$router.push('/playerJoin/' + this.$route.params.id)
+        },
+        getJiang(index) {
+            axios.post(
+                process.env.VUE_APP_BASE_URL+ 'script/jiang/' + index,
+                {
+                },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token')
+                    }
+                }
+            ).then(({data}) => {
+                if(data.status === 200) {
+                    this.appJiang[index] = 0;
+                    sessionStorage.setItem('jiang', JSON.stringify(this.appJiang));
+                    location.href=this.jiangList[index];
+                } else {
+                    this.$message({message: data.message, type: 'error'});
+                }
+            }).catch(() => {
+                this.$message({message: '网络错误', type: 'error'});
+            })
+            
         },
         getCode() {
             // console.log('创建房间号并获取房间二维码');
@@ -94,6 +137,12 @@ export default {
     background-repeat: no-repeat;
     background-color: #272828;
     color: #fff;
+    position: relative;
+    .jiang {
+        position: absolute;
+        top: 20%;
+        right: 10px;
+    }
     .banner {
         text-align: center;
         img {

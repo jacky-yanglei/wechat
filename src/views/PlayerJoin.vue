@@ -99,6 +99,8 @@ export default {
                         type: 'error',
                         confirmButtonText: '确定',
                         callback: () => {
+                            ws.focusClose = true;
+                            ws.WebSocket.close();
                             this.$router.push('/dmlogin');
                         }
                     });

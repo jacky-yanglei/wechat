@@ -49,6 +49,12 @@
             </div>
         </div>
         <div class="tips">
+            <div>淘“金”盲盒抽奖活动</div>
+            <div>iPhone手机、洽洽真金瓜子&吨吨手办盲盒、手办盲盒、洽洽瓜子盲盒大礼包、洽洽瓜子礼包专属5折优惠福利。</div>
+            <div>哪一个将是你带回去的宝藏呢！百分百中奖！！</div>
+            <div>活动期至2022年2月28日，宝藏有限，抽完即止。</div>
+            <div>活动解释权归壹直爽发行所有。</div>
+            <div>-----------------------------</div>
             <div>#有奖话题#</div>
             <div>小红书or微博发布 玩吨2+嗑瓜子的场景</div>
             <div>关注 洽洽 并@洽洽 带话题#剧本杀，嗑洽洽</div>
@@ -118,7 +124,7 @@ export default {
                                 confirmButtonText: '去领奖',
                                 callback: () => {
                                     if (winner == 1 || winner == 11) {
-                                        location.href = 'https://s.vchangyi.com/sI6';
+                                        location.href = 'https://s.vchangyi.com/sJM';
                                     } else {
                                         this.$router.push('/setAddress/' + this.$route.params.phone);
                                     }

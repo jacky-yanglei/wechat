@@ -34,6 +34,7 @@
 </template>
 <script>
 import axios from 'axios';
+import ws from '../assets/websoket';
 export default {
     data() {
         return {
@@ -48,6 +49,10 @@ export default {
             if (!this.valid()) {
                 return;
             }
+            if(ws.status) {
+                ws.focusClose = true;
+                ws.WebSocket.close();
+            }
             axios.post(
                 process.env.VUE_APP_BASE_URL+ 'script/login',
                 {
@@ -56,8 +61,13 @@ export default {
                 }
             ).then(({data}) => {
                 if(data.status === 200) {
-                    localStorage.setItem('token', data.data.token)
-                    this.$router.push('/home');
+                    sessionStorage.setItem('jiang', JSON.stringify(data.data.jiang??[1,1,1]));
+                    if (data.data.last_room_id) {
+                        this.$router.push('/home/' + data.data.last_room_id)
+                    } else {
+                        localStorage.setItem('token', data.data.token)
+                        this.$router.push('/home');
+                    }
                 } else {
                     this.$message({message: data.message, type: 'error'});
                 }

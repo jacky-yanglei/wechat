@@ -3,12 +3,13 @@ class joinRoomWs {
     status = false; // 当前连接状态
     WebSocket = null;
     roomId = null;
+    focusClose = false;
 
     constructor() {
         
     }
     init(roomId) {
-        console.log('init')
+        console.log('init', this.focusClose)
         this.roomId = roomId;
         let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
         // let url = 'ws://192.168.100.33:8000/api2/ws/';
@@ -29,6 +30,10 @@ class joinRoomWs {
     }
     reload(roomId, callback) {
         this.status = false;
+        if (this.focusClose) {
+            this.focusClose = false;
+            return;
+        }
         this.init(roomId);
         this.onopen(() => {
             if (sessionStorage.getItem('role')) {
@@ -54,12 +59,9 @@ class joinRoomWs {
         };
     }
     send(data) {
-        console.log(this.status);
-        console.log(data);
         if (this.status) {
             this.WebSocket.send(data)
         } else {
-            console.log('您还没有建立连接');
             this.reload(this.roomId, () => {
                 this.WebSocket.send(data)
             });
@@ -67,7 +69,13 @@ class joinRoomWs {
     }
     onmessage(callback) {
         this.WebSocket.onmessage = (e) => {
-            callback(JSON.parse(e.data), e);
+            let data = JSON.parse(e.data);
+            if (data.data_type === 'error') {
+                if (data.data === '错误的房间号') {
+                    this.focusClose = true;
+                }
+            }
+            callback(data, e);
         };
     }
     onclose() {

@@ -21,6 +21,21 @@
             <div class="footer">
                 <img src="../assets/exchange/bottom-pip.png" alt="">
             </div>
+            <div class="tips">
+                <div>淘“金”盲盒抽奖活动</div>
+                <div>iPhone手机、洽洽真金瓜子&吨吨手办盲盒、手办盲盒、洽洽瓜子盲盒大礼包、洽洽瓜子礼包专属5折优惠福利。</div>
+                <div>哪一个将是你带回去的宝藏呢！百分百中奖！！</div>
+                <div>活动期至2022年2月28日，宝藏有限，抽完即止。</div>
+                <div>活动解释权归壹直爽发行所有。</div>
+                <div>-----------------------------</div>
+                <div>#有奖话题#</div>
+                <div>小红书or微博发布 玩吨2+嗑瓜子的场景</div>
+                <div>关注 洽洽 并@洽洽 带话题#剧本杀，嗑洽洽</div>
+                <div>（微博：洽洽坚果；小红书：洽洽）</div>
+                <div>就有机会获得由洽洽瓜子提供的</div>
+                <div>“拍立得&9口味洽洽瓜子大礼包”</div>
+                <div>“大肚杯&9口味洽洽瓜子大礼包”</div>
+            </div>
         </div>
     </div>
 </template>
@@ -55,7 +70,7 @@ export default {
                             return;
                         }
                         if(data.data.played&&!data.data.is_mvp&&!data.data.ticket) {
-                            location.href = 'https://s.vchangyi.com/sI6';
+                            location.href = 'https://s.vchangyi.com/sJM';
                             return;
                         }
                         if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
@@ -137,6 +152,11 @@ export default {
             width: 100%;
             vertical-align: middle;
         }
+    }
+    .tips {
+        margin-top: 20px;
+        color: white;
+        font-size: 14px;
     }
 }
 </style>

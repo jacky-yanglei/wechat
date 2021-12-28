@@ -32,6 +32,11 @@ const routes = [
     component: Exchange
   },
   {
+    path: '/home/:id',
+    name: 'home',
+    component: Exchange
+  },
+  {
     path: '/playerJoin/:roomid',
     name: 'playerJoin',
     component: PlayerJoin
