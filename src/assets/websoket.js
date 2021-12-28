@@ -15,17 +15,29 @@ class joinRoomWs {
         // let url = 'ws://192.168.100.33:8000/api2/ws/';
         this.WebSocket = new WebSocket(url + roomId + '/');
         this.status = true;
+        
         this.WebSocket.onclose = (e) => {
             console.log('onclose WebSocket断开链接');
             console.log(e);
             setTimeout(() => {
-                this.reload(this.roomId);
+                this.reloadCallback();
+                // this.reload(this.roomId, () => {
+                //     if(this.reloadCallback) {
+                //         console.log(this.reloadCallback);
+                //         this.reloadCallback();
+                //     }
+                // });
             }, 1000);
         }
-        this.WebSocket.onerror = () => {
-            console.log('onerror WebSocket断开链接');
-            // console.log(e);
-            // this.reload(this.roomId);
+        // this.WebSocket.onerror = () => {
+        //     console.log('onerror WebSocket断开链接');
+        //     // console.log(e);
+        //     // this.reload(this.roomId);
+        // }
+    }
+    reloadCallback(callback) {
+        if (callback) {
+            this.callback();
         }
     }
     reload(roomId, callback) {
@@ -45,8 +57,7 @@ class joinRoomWs {
                     data.check_token = localStorage.getItem('token');
                 }
                 this.send(
-                    JSON.stringify({
-                        data_type: 'init', data: data }))
+                    JSON.stringify({data_type: 'init', data: data }));
                 if (callback) {
                     callback();
                 }
@@ -79,7 +90,6 @@ class joinRoomWs {
         };
     }
     onclose() {
-        
         // this.WebSocket.onclose = (e) => {
         //     callback(e);
         // };

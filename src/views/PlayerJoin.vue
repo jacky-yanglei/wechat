@@ -72,13 +72,19 @@ export default {
                     this.onmessage(e)
                 });
             } else {
-                ws.reload(this.$route.params.roomid, () => {
-                    this.postGetRoomInfo();
-                });
+                this.reloadWs();
+            }
+            ws.reloadCallback = () => {
+                this.reloadWs();
+            }
+        },
+        reloadWs() {
+            ws.reload(this.$route.params.roomid, () => {
+                this.postGetRoomInfo();
                 ws.onmessage((e) => {
                     this.onmessage(e)
                 });
-            }
+            });
         },
         onmessage(e) {
             if(e.data_type === 'init') {

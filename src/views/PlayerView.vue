@@ -316,14 +316,20 @@ export default {
                     this.initOnMessage(e);
                 });
             } else {
-                ws.reload(this.$route.params.id, () => {
-                    this.postGetUserInfo();
-                    this.postGetRoomInfo();
-                });
-                ws.onmessage((e) => {
-                    this.initOnMessage(e);
-                });
+                this.reloadWs();
             }
+            ws.reloadCallback = () => {
+                this.reloadWs();
+            };
+        },
+        reloadWs() {
+            ws.reload(this.$route.params.id, () => {
+                this.postGetUserInfo();
+                this.postGetRoomInfo();
+                ws.onmessage((e) => {
+                    this.initOnMessage(e)
+                });
+            });
         },
         // 监听数量变化
         amountChange() {
