@@ -62,10 +62,10 @@ export default {
             ).then(({data}) => {
                 if(data.status === 200) {
                     sessionStorage.setItem('jiang', JSON.stringify(data.data.jiang??[1,1,1]));
+                    localStorage.setItem('token', data.data.token)
                     if (data.data.last_room_id) {
                         this.$router.push('/home/' + data.data.last_room_id)
                     } else {
-                        localStorage.setItem('token', data.data.token)
                         this.$router.push('/home');
                     }
                 } else {

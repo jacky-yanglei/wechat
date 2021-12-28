@@ -243,7 +243,7 @@ export default {
                 let arr = list.concat();
                 if (this.orderByType === 'marketValue') {
                     arr.sort((a,b) => {
-                        return b.cash + b.stock * this.currentPrice - a.cash + a.stock * this.currentPrice; 
+                        return (b.cash + b.stock * this.currentPrice) - (a.cash + a.stock * this.currentPrice);
                     })
                     return arr
                 } else if (this.orderByType === 'cash') {
@@ -266,6 +266,7 @@ export default {
     },
     methods: {
         openRank() {
+            this.postGetRoomInfo();
             this.postAllUserInfo();
             this.dialogVisible = true;
         },

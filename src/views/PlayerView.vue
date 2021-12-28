@@ -46,6 +46,15 @@
             </div>
         </div>
         <div class="print">
+            <div class="cover" v-if="onTrading">
+                <div>取消订单后，方可继续操作</div>
+                <div v-if="onTradingType === 'buy'">
+                    <img @click="cancel()" src="../assets/exchange/cancel-buy.png" alt="">
+                </div>
+                <div v-if="onTradingType === 'sell'">
+                    <img @click="cancel()" src="../assets/exchange/cancel-sell.png" alt="">
+                </div>
+            </div>
             <div class="type">
                 <div @click="selectExchange(0)" :class="exchangeType === 0 ? 'active' : ''"><i class="check" :class="exchangeType === 0 ? 'active' : ''"></i>买入</div>
                 <div @click="selectExchange(1)" :class="exchangeType === 1 ? 'active' : ''"><i class="check" :class="exchangeType === 1 ? 'active' : ''"></i>卖出</div>
@@ -272,7 +281,7 @@ export default {
                 let arr = list.concat();
                 if (this.orderByType === 'marketValue') {
                     arr.sort((a,b) => {
-                        return b.cash + b.stock * this.currentPrice - a.cash + a.stock * this.currentPrice; 
+                        return (b.cash + b.stock * this.currentPrice) - (a.cash + a.stock * this.currentPrice);
                     })
                     return arr
                 } else if (this.orderByType === 'cash') {
@@ -336,6 +345,7 @@ export default {
             }
         },
         openRank() {
+            this.postGetRoomInfo();
             this.postAllUserInfo();
             this.dialogVisible = true;
         },
@@ -358,6 +368,7 @@ export default {
             if (e.data_type === 'buy' || e.data_type === 'sell') {
                 if (e.success) {
                     this.onTrading = true;
+                    this.onTradingType = e.data_type
                     // this.amount = '';
                     // this.amountChange();
                     // this.postGetUserInfo();
@@ -416,11 +427,13 @@ export default {
         },
         // 获取用户信息
         getUserInfo(data) {
+            this.onTradingType = data.wait_for_trade.buy === 1 ? 'buy' : 'sell';
             this.onTrading = data.wait_for_trade.buy + data.wait_for_trade.sell > 0;
             this.userInfo = data;
         },
         getPriceChart(data) {
             this.price = data.price;
+            this.currentPrice = data.price;
             let initLine = [data.price];
             // for (let i = 0;i < data.price_line.length; i++) {
             //     initLine.push(data.price);
@@ -590,7 +603,7 @@ export default {
                 },
                 series: [
                     {
-                        lineWidth: 2,
+                        lineWidth: 4,
                         marker: {
                             enabled: false
                         },
@@ -791,6 +804,23 @@ export default {
     .print {
         position: relative;
         padding: 0 60px 30px;
+        .cover {
+            position: absolute;
+            width: 100%;
+            height: 110%;
+            background-color: rgba(0, 0, 0, 0.8);
+            top: -10%;
+            left: 0;
+            z-index: 111111111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            > div:first-child {
+                margin-bottom: 20px;
+            }
+        }
     }
     .type {
         margin-top: 15px;
@@ -799,36 +829,49 @@ export default {
         margin-bottom: 20px;
         position: relative;
         z-index: 2;
+        background-color: rgba(48, 24, 2, 0.5);
+        height: 40px;
+        border-radius: 20px;
+        border: 1px solid #301802;
         > div {
             display: flex;
             align-items: center;
             cursor: pointer;
             color: rgba(0, 0, 0, 0.5);
-            &.active {
-                color: #000;
+            flex: 0 0 50%;
+            justify-content: center;
+            &:first-child.active {
+                color: #fff;
+                background: rgba(188, 99, 79, 1);
+                border-radius: 20px;
+            }
+            &:last-child.active {
+                color: #fff;
+                background: rgba(188, 177, 79, 1);
+                border-radius: 20px;
             }
             i {
                 margin-right: 5px;
             }
         }
-        .check {
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-            background-color: #62402C;
-            border-radius: 50%;
-            position: relative;
-            &.active::after {
-                content: "";
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                background-color: #BC844F;
-                border-radius: 50%;
-                top: 4px;
-                left: 4px;
-            }
-        }
+        // .check {
+        //     width: 20px;
+        //     height: 20px;
+        //     display: inline-block;
+        //     background-color: #62402C;
+        //     border-radius: 50%;
+        //     position: relative;
+        //     &.active::after {
+        //         content: "";
+        //         position: absolute;
+        //         width: 12px;
+        //         height: 12px;
+        //         background-color: #BC844F;
+        //         border-radius: 50%;
+        //         top: 4px;
+        //         left: 4px;
+        //     }
+        // }
     }
     .slider-block {
         position: relative;
