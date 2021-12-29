@@ -509,15 +509,16 @@ export default {
                 return;
             }
             if (parseFloat(this.amount*10000) > this.userInfo.cash) {
-                this.$confirm(`现金不足，最多可使用现金为${(this.userInfo.cash/10000).toFixed(1)}万元，是否将当前的现金全部买入?`, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    ws.send(JSON.stringify({data_type: 'buy', data: this.userInfo.cash}))
-                }).catch(() => {
+                ws.send(JSON.stringify({data_type: 'buy', data: this.userInfo.cash}))
+                // this.$confirm(`现金不足，最多可使用现金为${(this.userInfo.cash/10000).toFixed(1)}万元，是否将当前的现金全部买入?`, '提示', {
+                //     confirmButtonText: '确定',
+                //     cancelButtonText: '取消',
+                //     type: 'warning'
+                // }).then(() => {
+                //     ws.send(JSON.stringify({data_type: 'buy', data: this.userInfo.cash}))
+                // }).catch(() => {
                     
-                });
+                // });
             } else {
                 ws.send(JSON.stringify({data_type: 'buy', data: parseFloat(this.amount) * 10000}))
             }
@@ -536,15 +537,16 @@ export default {
                 return;
             }
             if (this.userInfo.stock < this.amount) {
-                this.$confirm(`股票数量不足，最多可使用${this.userInfo.stock}股，是否将持有股票全部卖出?`, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    ws.send(JSON.stringify({data_type: 'sell', data: this.userInfo.stock}))
-                }).catch(() => {
+                ws.send(JSON.stringify({data_type: 'sell', data: this.userInfo.stock}))
+                // this.$confirm(`股票数量不足，最多可使用${this.userInfo.stock}股，是否将持有股票全部卖出?`, '提示', {
+                //     confirmButtonText: '确定',
+                //     cancelButtonText: '取消',
+                //     type: 'warning'
+                // }).then(() => {
+                //     ws.send(JSON.stringify({data_type: 'sell', data: this.userInfo.stock}))
+                // }).catch(() => {
                     
-                });
+                // });
             } else {
                 ws.send(JSON.stringify({data_type: 'sell', data: parseFloat(this.amount)}))
             }
