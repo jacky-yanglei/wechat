@@ -82,7 +82,6 @@ export default {
     methods: {
         post() {
             this.postStatus = true;
-            this.post = true;
             if (!this.valid()) {
                 return;
             }
@@ -108,10 +107,10 @@ export default {
                         }
                     });
                 } else {
-                    this.$message('注册失败');
+                    this.$message({message: data.message, type: 'error'});
                 }
             }).catch(() => {
-                this.$message('注册失败');
+                this.$message({message: '注册失败', type: 'error'});
             })
         },
         valid() {
@@ -144,7 +143,7 @@ export default {
     min-height: 100vh;
     max-width: 750px;
     margin: 0 auto;
-    background-image: url('/static/images/exchange/bg.png');
+    background-image: url('/ddd/static/images/exchange/bg.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
