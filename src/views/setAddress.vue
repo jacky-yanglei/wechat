@@ -1,7 +1,7 @@
 <template>
     <div class="page">
         <div class="title"><img src="../assets/exchange/title.png" alt=""></div>
-        <div class="content">
+        <div class="content" v-if="!setSuccess">
             <div class="header">
                 <img src="../assets/exchange/top-pip.png" alt="">
             </div>
@@ -35,6 +35,9 @@
                 <img src="../assets/exchange/bottom-pip.png" alt="">
             </div>
         </div>
+        <div class="success" v-else>
+            提交成功，等待礼品送达吧!
+        </div>
     </div>
 </template>
 
@@ -47,6 +50,7 @@ export default {
             phone: '',
             address: '',
             postStatus: false,
+            setSuccess: false,
         }
     },
     methods: {
@@ -62,8 +66,11 @@ export default {
                 address_details: this.address,
             }).then(({data}) => {
                 if (data.status == 200) {
-                    this.$alert('地址已提交，您可以关闭页面，等待收货啦！', '提示', {
+                    this.$alert('提交成功，等待礼品送达吧！', '提示', {
                         confirmButtonText: '确定',
+                        callback:() => {
+                            this.setSuccess = true;
+                        }
                     });
                 }
             });
@@ -89,11 +96,20 @@ export default {
     min-height: 100vh;
     max-width: 750px;
     margin: 0 auto;
-    background-image: url('/static/images/exchange/bg.png');
+    background-image: url('/ddd/static/images/exchange/bg.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-color: #272828;
     padding: 0 15px 50px;
+    .success {
+        width: 100%;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: #fff;
+    }
     &::v-deep input{
         font-size: 16px;
         background-color: #301802;

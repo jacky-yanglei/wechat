@@ -1,5 +1,6 @@
 <template>
     <div class="page">
+        <transition name="coverTransition"><div class="cover" v-if="!clickCover" @click="clickCover = true"></div></transition>
         <div class="title"><img src="../assets/exchange/title.png" alt=""></div>
         <div class="content">
             <div class="header">
@@ -45,6 +46,7 @@ import ws from '../assets/websoket.js';
 export default {
     data() {
         return {
+            clickCover: false,
             phone: '',
             role: '',
             postStatus: '',
@@ -111,6 +113,10 @@ export default {
                                     this.$message({message: e.message, type: 'error'})
                                 }
                             }
+                            if(e.data_type === 'error') {
+                                ws.status = false;
+                                this.$message({message: e.data, type: 'error'});
+                            }
                         }
                     );
                 }
@@ -122,6 +128,28 @@ export default {
 
 <style lang="less" scoped>
 .page {
+    .coverTransition-leave-active {
+        transition: all 1s linear;
+    }
+    .coverTransition-leave {
+        opacity: 1;
+    }
+    .coverTransition-leave-to {
+        opacity: 0;
+    }
+    .cover {
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        background-image: url('/ddd/static/images/exchange/DDD.gif');
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        cursor: pointer;
+    }
     min-height: 100vh;
     max-width: 750px;
     margin: 0 auto;
