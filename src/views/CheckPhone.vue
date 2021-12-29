@@ -80,7 +80,7 @@ export default {
                             this.$router.push('/lottery/' + this.phone)
                             return;
                         }
-                        if(data.data.played&&!data.data.is_mvp&&!data.data.ticket) {
+                        if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
                             location.href = 'https://s.vchangyi.com/sJM';
                             return;
                         }
@@ -88,11 +88,11 @@ export default {
                             this.$router.push('/setAddress/' + this.phone)
                             return;
                         }
-                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.ticket) {
+                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
                             location.href = 'https://s.vchangyi.com/sJM';
                             return;
                         }
-                        if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.ticket) || (data.data.played&&!data.data.is_mvp&&!data.data.ticket)) {
+                        if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
                             this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
