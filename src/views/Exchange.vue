@@ -79,7 +79,7 @@ export default {
         },
         getJiang(index) {
             axios.post(
-                process.env.VUE_APP_BASE_URL+ 'script/jiang/' + index,
+                process.env.VUE_APP_BASE_URL+ 'script/jiang/' + index + '/',
                 {
                 },
                 {
@@ -91,7 +91,7 @@ export default {
                 if(data.status === 200) {
                     this.appJiang[index] = 0;
                     sessionStorage.setItem('jiang', JSON.stringify(this.appJiang));
-                    location.href=this.jiangList[index];
+                    location.href = this.jiangList[index];
                 } else {
                     this.$message({message: data.message, type: 'error'});
                 }
