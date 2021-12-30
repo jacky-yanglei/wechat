@@ -107,7 +107,10 @@ export default {
                         callback: () => {
                             ws.focusClose = true;
                             ws.WebSocket.close();
-                            this.$router.push('/dmlogin');
+                            localStorage.removeItem('playerInfo');
+                            setTimeout(() => {
+                                location.href = '/ddd/';
+                            }, 10)
                         }
                     });
                 }

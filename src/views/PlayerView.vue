@@ -247,7 +247,6 @@ export default {
     methods: {
         initWs() {
             ws.reloadCallback = () => {
-                console.log(1111);
                 this.reloadWs();
             };
             if (ws.status) {
