@@ -4,15 +4,19 @@
             <div>东印钞无限公司</div>
             <div><span>价格：</span><span>{{ showPrice }}</span></div>
         </div>
+        <div class="btns">
+            <div class="rank-btn" @click="openRank()">排行榜</div>
+            <div class="exit-room" @click="exitRoom()">退出房间</div>
+        </div>
         <div class="chart" ref="chart">
 
         </div>
         <div class="role">
             <div>
                 {{ currentRole }}
-                <span class="exit-room" @click="exitRoom()">退出房间</span>
+                <!-- <span class="exit-room" @click="exitRoom()">退出房间</span> -->
             </div>
-            <div @click="openRank()">排行榜</div>
+            <!-- <div class="rank-btn" @click="openRank()">排行榜</div> -->
         </div>
         <div class="marketvalue">
             <div>
@@ -607,9 +611,25 @@ export default {
     margin: 0 auto;
     background-color: #CCB480;
     min-height: 100vh;
+    .btns {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 16px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        > div {
+            border: 2px solid #A89061;
+            padding: 0 5px;
+            border-radius: 4px;
+        }
+    }
     .exit-room {
-        margin-left: 10px;
         cursor: pointer;
+        color: #bc634f;
+    }
+    .rank-btn {
+        cursor: pointer;
+        color: #333;
     }
     .dialog-footer {
         img {
