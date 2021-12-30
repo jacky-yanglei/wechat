@@ -48,6 +48,15 @@ export default {
             return arr.filter(item => this.joined.indexOf(item) == -1);
         }
     },
+    created() {
+        let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
+        if (playerInfo.role !== 'admin') {
+            localStorage.removeItem('playerInfo');
+            setTimeout(() => {
+                location.href = '/ddd/';
+            }, 10);
+        }
+    },
     mounted() {
         this.initWs();
         console.log(location.origin + process.env.VUE_APP_Redirect + "/playerLogin/" + this.$route.params.roomid,);

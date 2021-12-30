@@ -129,7 +129,7 @@
         width="100%">
         <div>
             <div>
-                <a @click="postAllUserInfo()" class="refresh-btn"><i class="el-icon-refresh-left"></i>刷新排行榜</a>
+                <a @click="openRank()" class="refresh-btn"><i class="el-icon-refresh-left"></i>刷新排行榜</a>
             </div>
             <div class="item head">
                 <div>角色</div>
@@ -239,7 +239,13 @@ export default {
     watch: {
     },
     created() {
-        
+        let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
+        if (!playerInfo.role || playerInfo.role === 'admin') {
+            localStorage.removeItem('playerInfo');
+            setTimeout(() => {
+                location.href = '/ddd/playerLogin/' + this.$route.params.id;
+            }, 10);
+        }
     },
     mounted() {
         this.initWs();
