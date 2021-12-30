@@ -73,6 +73,8 @@
                     <div>上一次价格：{{ (roomInfo.last_price?roomInfo.last_price:roomInfo.price).toFixed(2) }}元</div>
                     <div>当前价格：{{ currentPrice.toFixed(2) }}元</div>
                     <div>最终价格：{{ roomInfo.price.toFixed(2) }}元</div>
+
+                    <div style="margin-top: 10px;">按照上一次价格：</div>
                     <div class="fast-select">
                         <div @click="priceUp(1.1)" class="up">上涨 10%</div>
                         <div @click="priceUp(1.25)" class="up">上涨 20%</div>
@@ -279,7 +281,7 @@ export default {
             ws.send(JSON.stringify({data_type: 'all_user_info', data: null}));
         },
         priceUp(radio) {
-            this.price = parseFloat((this.roomInfo.price * radio).toFixed(2));
+            this.price = parseFloat((this.roomInfo.last_price * radio).toFixed(2));
         },
         selectType(index) {
             this.exchangeType = index;
@@ -720,12 +722,13 @@ export default {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
-                margin-top: 10px;
+                // margin-top: 10px;
                 > div {
                     width: 48%;
                     height: 32px;
                     border-radius: 16px;
-                    margin-top: 10px;
+                    margin-top: 5px;
+                    margin-bottom: 5px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
