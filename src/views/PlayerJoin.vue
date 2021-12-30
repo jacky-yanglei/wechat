@@ -50,7 +50,7 @@ export default {
     },
     mounted() {
         this.initWs();
-        console.log(this.$route.params.roomid);
+        console.log(location.origin + process.env.VUE_APP_Redirect + "/playerLogin/" + this.$route.params.roomid,);
         // eslint-disable-next-line no-undef
         new QRCode(this.$refs.qrcode, {
             text: location.origin + process.env.VUE_APP_Redirect + "/playerLogin/" + this.$route.params.roomid,
@@ -64,9 +64,9 @@ export default {
     },
     methods: {
         initWs() {
-            sessionStorage.setItem('role', 'admin');
+            localStorage.setItem('playerInfo', JSON.stringify({roomId: this.$route.params.roomid, role: 'admin', phone: ""}))
             if (ws.status) {
-                ws.send(JSON.stringify({data_type: 'init', data: {name: "admin", phone: '', check_token: localStorage.getItem('token')}}));
+                ws.send(JSON.stringify({data_type: 'reconnect', data: {name: "admin", phone: '', check_token: localStorage.getItem('token')}}));
                 this.postGetRoomInfo();
                 ws.onmessage((e) => {
                     this.onmessage(e)
@@ -84,10 +84,10 @@ export default {
                 ws.onmessage((e) => {
                     this.onmessage(e)
                 });
-            });
+            }, true);
         },
         onmessage(e) {
-            if(e.data_type === 'init') {
+            if(e.data_type === 'init' || e.data_type === 'reconnect') {
                 if (e.success) {
                     sessionStorage.setItem('role', "admin");
                 } else {

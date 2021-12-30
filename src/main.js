@@ -13,7 +13,7 @@ Vue.use(VueRouter);
 
 Vue.use(ElementUI);
 
-new Vue({
+export default new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')

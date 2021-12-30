@@ -262,7 +262,12 @@ export default {
         }
     },
     mounted() {
-        this.initWs();
+        if (localStorage.getItem('playerInfo') && JSON.parse(localStorage.getItem('playerInfo')).role === 'admin') {
+            this.initWs();
+        } else {
+            localStorage.removeItem('playerInfo');
+            location.href = '/ddd/dmlogin';
+        }
     },
     methods: {
         openRank() {
@@ -321,7 +326,7 @@ export default {
                 ws.onmessage((e) => {
                     this.onmessage(e)
                 });
-            });
+            }, true);
         },
         // 修改股票价格
         setPrice() {

@@ -8,7 +8,10 @@
 
         </div>
         <div class="role">
-            <div>{{ currentRole }}</div>
+            <div>
+                {{ currentRole }}
+                <span class="exit-room" @click="exitRoom()">退出房间</span>
+            </div>
             <div @click="openRank()">排行榜</div>
         </div>
         <div class="marketvalue">
@@ -54,6 +57,9 @@
                 <div v-if="onTradingType === 'sell'">
                     <img @click="cancel()" src="../assets/exchange/cancel-sell.png" alt="">
                 </div>
+            </div>
+            <div class="cover" v-if="!openTrade && !onTrading">
+                <div>等待DM开放交易</div>
             </div>
             <div class="type">
                 <div @click="selectExchange(0)" :class="exchangeType === 0 ? 'active' : ''"><i class="check" :class="exchangeType === 0 ? 'active' : ''"></i>买入</div>
@@ -143,7 +149,6 @@
 <script>
 import highcharts from 'highcharts/highstock'
 import ws from '../assets/websoket';
-import { setTimeout } from 'timers';
 export default {
     data() {
         return {
@@ -163,84 +168,12 @@ export default {
             },
             orderByType: 'marketValue',
             userRank: [
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "觉觉",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 100,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "飒飒",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "霸霸",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "玛玛",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "臭臭",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "蒂蒂",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 10000,
-                //     id: "55",
-                //     role: "野也",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "帅帅",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
-                // {
-                //     cash: 0,
-                //     id: "55",
-                //     role: "宝宝",
-                //     room_id: "89960",
-                //     shares: 0,
-                //     stock: 0,
-                // },
             ],
         }
     },
     computed: {
         currentRole() {
-            return sessionStorage.getItem('role') || '--'
+            return this.userInfo?.role || '--'
         },
         showPrice() {
             if (this.price) {
@@ -309,6 +242,10 @@ export default {
     },
     methods: {
         initWs() {
+            ws.reloadCallback = () => {
+                console.log(1111);
+                this.reloadWs();
+            };
             if (ws.status) {
                 this.postGetUserInfo();
                 this.postGetRoomInfo();
@@ -318,17 +255,31 @@ export default {
             } else {
                 this.reloadWs();
             }
-            ws.reloadCallback = () => {
-                this.reloadWs();
-            };
         },
         reloadWs() {
+            let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
+            console.log(playerInfo);
             ws.reload(this.$route.params.id, () => {
                 this.postGetUserInfo();
                 this.postGetRoomInfo();
                 ws.onmessage((e) => {
                     this.initOnMessage(e)
                 });
+            }, this.$route.params.id == playerInfo.roomId);
+        },
+        // 退出房间
+        exitRoom() {
+            this.$confirm(`您确定要退出房间吗？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                localStorage.removeItem('playerInfo');
+                setTimeout(() => {
+                    location.href = '/ddd/playerLogin/' + this.$route.params.id;
+                }, 10)
+            }).catch(() => {
+                
             });
         },
         // 监听数量变化
@@ -412,6 +363,22 @@ export default {
             if (e.data_type === 'all_user_info') {
                 if(e.success) {
                     this.userRank = e.data;
+                }
+            }
+            if (e.data_type === 'check_token') {
+                if(!e.success) {
+                    this.$alert(`${e.message}`, '提示', {
+                        type: 'error',
+                        confirmButtonText: '确定',
+                        callback: () => {
+                            ws.focusClose = true;
+                            ws.WebSocket.close();
+                            localStorage.removeItem('playerInfo');
+                            setTimeout(() => {
+                                location.href = '/ddd/playerLogin/' + this.$route.params.id;
+                            }, 10);
+                        }
+                    });
                 }
             }
         },
@@ -629,11 +596,21 @@ export default {
 }
 </style>
 <style lang="less" scoped>
+::v-deep {
+    body {
+        overflow: hidden;
+    }
+}
 .page {
+    overflow: hidden;
     max-width: 750px;
     margin: 0 auto;
     background-color: #CCB480;
     min-height: 100vh;
+    .exit-room {
+        margin-left: 10px;
+        cursor: pointer;
+    }
     .dialog-footer {
         img {
             cursor: pointer;
@@ -815,14 +792,14 @@ export default {
         .cover {
             position: absolute;
             width: 100%;
-            height: 110%;
+            height: 1000px;
             background-color: rgba(0, 0, 0, 0.8);
             top: -10%;
             left: 0;
-            z-index: 111111111;
+            z-index: 1000;
             display: flex;
-            justify-content: center;
             align-items: center;
+            padding-top: 100px;
             flex-direction: column;
             color: #fff;
             > div:first-child {

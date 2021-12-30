@@ -9,7 +9,7 @@ class joinRoomWs {
         
     }
     init(roomId) {
-        console.log('init', this.focusClose)
+        // Vue.$message('121312312');
         this.roomId = roomId;
         let url = 'wss://wx.tmgxbxwl.cn/api2/ws/';
         // let url = 'ws://192.168.100.33:8000/api2/ws/';
@@ -21,26 +21,15 @@ class joinRoomWs {
             console.log(e);
             setTimeout(() => {
                 this.reloadCallback();
-                // this.reload(this.roomId, () => {
-                //     if(this.reloadCallback) {
-                //         console.log(this.reloadCallback);
-                //         this.reloadCallback();
-                //     }
-                // });
             }, 1000);
         }
-        // this.WebSocket.onerror = () => {
-        //     console.log('onerror WebSocket断开链接');
-        //     // console.log(e);
-        //     // this.reload(this.roomId);
-        // }
     }
     reloadCallback(callback) {
         if (callback) {
             this.callback();
         }
     }
-    reload(roomId, callback) {
+    reload(roomId, callback, isForce) {
         this.status = false;
         if (this.focusClose) {
             this.focusClose = false;
@@ -48,21 +37,27 @@ class joinRoomWs {
         }
         this.init(roomId);
         this.onopen(() => {
-            if (sessionStorage.getItem('role')) {
+            let role = sessionStorage.getItem('role');
+            let phone = sessionStorage.getItem('phone') || '';
+            if (isForce) {
+                let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}')
+                role = playerInfo.role;
+            }
+            if (role) {
                 let data = {
-                    name: sessionStorage.getItem('role'), 
-                    phone: sessionStorage.getItem('phone') || '',
+                    name: role,
+                    phone: phone,
                 };
                 if (data.name === 'admin') {
                     data.check_token = localStorage.getItem('token');
                 }
-                this.send(
-                    JSON.stringify({data_type: 'init', data: data }));
+                console.log(JSON.stringify({data_type: isForce?'reconnect':'init', data: data }))
+                this.send(JSON.stringify({data_type: isForce?'reconnect':'init', data: data }));
                 if (callback) {
                     callback();
                 }
             }
-        })
+        });
     }
     onopen (callback) {
         this.WebSocket.onopen = (e) => {
@@ -72,34 +67,29 @@ class joinRoomWs {
     send(data) {
         if (this.status) {
             this.WebSocket.send(data)
-        } else {
-            this.reload(this.roomId, () => {
-                this.WebSocket.send(data)
-            });
         }
     }
     onmessage(callback) {
         this.WebSocket.onmessage = (e) => {
-            let data = JSON.parse(e.data);
-            if (data.data_type === 'error') {
-                if (data.data === '错误的房间号') {
+            if (e.data === 'ping') {
+                ws.send('pong')
+            } else {
+                let data = JSON.parse(e.data);
+                if (data.data_type === 'error') {
+                    if (data.data === '错误的房间号') {
+                        this.focusClose = true;
+                    }
+                }
+                if (data.data_type === 'close') {
                     this.focusClose = true;
                 }
+                callback(data, e);
             }
-            callback(data, e);
         };
     }
     onclose() {
-        // this.WebSocket.onclose = (e) => {
-        //     callback(e);
-        // };
     }
     onerror() {
-        
-        // this.status = false;
-        // this.WebSocket.onerror = (e) => {
-        //     callback(e);
-        // };
     }
 }
 let ws = new joinRoomWs();

@@ -43,6 +43,11 @@ export default {
             password: ''
         }
     },
+    created() {
+        if (localStorage.getItem('token')) {
+            this.$router.replace('/home');
+        }
+    },
     methods: {
         post() {
             this.postStatus = true;

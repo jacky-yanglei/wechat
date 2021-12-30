@@ -6,7 +6,7 @@
         <div class="key">
             <img src="../assets/exchange/key.png" alt="">
             <div>
-                <div class="btn" v-if="$route.params.id">
+                <div class="btn" v-if="roomId">
                     <img @click="backRoom()" src="../assets/exchange/back-room.png" alt="">
                 </div>
                 <div class="btn">
@@ -42,6 +42,7 @@ export default {
                 'https://s.vchangyi.com/sJE',
                 'https://s.vchangyi.com/sJp'
             ],
+            roomId: null,
         }
     },
     computed: {
@@ -51,6 +52,7 @@ export default {
         this.appJiang = JSON.parse(sessionStorage.getItem('jiang')??JSON.stringify([1,1,1]));
     },
     mounted() {
+        this.roomId = this.$route.params.id;
     },
     methods: {
         checkToken() {
@@ -65,17 +67,21 @@ export default {
                 }
             ).then(({data}) => {
                 if(data.status === 200) {
+                    if (data.data.last_room_id) {
+                        this.roomId = data.data.last_room_id;
+                    }
                     localStorage.setItem('token', data.data.new_token)
                     this.tokenStatusLoading = true;
                 } else {
-                    this.$router.push('/dmlogin');
+                    localStorage.removeItem('token');
+                    this.$router.replace('/dmlogin');
                 }
             }).catch(() => {
                 this.checkToken();
             })
         },
         backRoom() {
-            this.$router.push('/playerJoin/' + this.$route.params.id)
+            this.$router.push('/playerJoin/' + this.roomId)
         },
         getJiang(index) {
             axios.post(
@@ -91,7 +97,9 @@ export default {
                 if(data.status === 200) {
                     this.appJiang[index] = 0;
                     sessionStorage.setItem('jiang', JSON.stringify(this.appJiang));
-                    location.href = this.jiangList[index];
+                    setTimeout(() => {
+                        location.href = this.jiangList[index];
+                    }, 10)
                 } else {
                     this.$message({message: data.message, type: 'error'});
                 }

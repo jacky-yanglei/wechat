@@ -17,7 +17,7 @@
                     <div class="tips">(手机号是领奖唯一凭证，请务必仔细录入)</div>
                 </div>
                 <div>
-                    <div>选择人物</div>
+                    <div>{{"选择角色"}}</div>
                     <div>
                         <el-select v-model="role" placeholder="请选择">
                             <el-option
@@ -50,6 +50,7 @@ export default {
             phone: '',
             role: '',
             postStatus: '',
+            playerInfo: {},
             roleOptions: [
                 {
                     value: '觉觉',
@@ -87,25 +88,65 @@ export default {
                     value: '宝宝',
                     label: "宝宝"
                 }
-            ]
+            ],
         }
     },
+    created() {
+        console.log(this.$route.params.id);
+    },
+    mounted() {
+        this.initPage();
+    },
     methods: {
-        post() {
+        initPage() {
+            let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
+            this.playerInfo = playerInfo;
+            if (this.playerInfo.roomId === this.$route.params.id) {
+                
+                this.phone = playerInfo.phone;
+                this.role = playerInfo.role;
+                this.$router.replace('/playerView/' + this.$route.params.id);
+                // this.post(true);
+                
+            }
+        },
+        post(isForce) {
             this.postStatus = true;
             if(this.phone && this.role) {
-                if (ws.status) {
-                    ws.send(JSON.stringify({data_type: 'init', data: {name: this.role, phone: this.phone}}));
-                } else {
+                ws.init(this.$route.params.id);
+                ws.onopen((e) => {
+                    console.log(e);
+                    ws.send(JSON.stringify({data_type: (isForce?'reconnect':'init'), data: {name: this.role, phone: this.phone}}));
+                });
+                ws.onmessage(
+                    (e) => {
+                        if(e.data_type === 'init' || e.data_type === 'reconnect') {
+                            if(e.success) {
+                                localStorage.setItem('playerInfo', JSON.stringify({roomId: this.$route.params.id, role: this.role, phone: this.phone}));
+                                sessionStorage.setItem('role', this.role);
+                                sessionStorage.setItem('phone', this.phone);
+                                this.$router.replace('/playerView/' + this.$route.params.id);
+                            } else {
+                                this.$message({message: e.message, type: 'error'})
+                            }
+                        }
+                        if(e.data_type === 'error') {
+                            ws.status = false;
+                            this.$message({message: e.data, type: 'error'});
+                        }
+                    }
+                );
+                ws.reloadCallback = () => {
                     ws.init(this.$route.params.id);
                     ws.onopen((e) => {
                         console.log(e);
-                        ws.send(JSON.stringify({data_type: 'init', data: {name: this.role, phone: this.phone}}));
+                        ws.send(JSON.stringify({data_type: (isForce?'reconnect':'init'), data: {name: this.role, phone: this.phone}}));
                     });
                     ws.onmessage(
                         (e) => {
-                            if(e.data_type === 'init') {
+                            if(e.data_type === 'init' || e.data_type === 'reconnect') {
                                 if(e.success) {
+                                    localStorage.setItem('playerInfo', JSON.stringify({roomId: this.$route.params.id, role: this.role, phone: this.phone}));
                                     sessionStorage.setItem('role', this.role);
                                     sessionStorage.setItem('phone', this.phone);
                                     this.$router.replace('/playerView/' + this.$route.params.id);
@@ -119,7 +160,7 @@ export default {
                             }
                         }
                     );
-                }
+                };
             }
         }
     }
