@@ -396,6 +396,7 @@ export default {
                             ws.focusClose = true;
                             ws.WebSocket.close();
                             localStorage.removeItem('playerInfo');
+                            localStorage.removeItem('token');
                             setTimeout(() => {
                                 location.href = '/ddd/';
                             }, 10)
