@@ -49,13 +49,13 @@ export default {
         }
     },
     created() {
-        let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
-        if (playerInfo.role !== 'admin') {
-            localStorage.removeItem('playerInfo');
-            setTimeout(() => {
-                location.href = '/ddd/';
-            }, 10);
-        }
+        // let playerInfo = JSON.parse(localStorage.getItem('playerInfo')??'{}');
+        // if (playerInfo.role !== 'admin') {
+        //     localStorage.removeItem('playerInfo');
+        //     setTimeout(() => {
+        //         location.href = '/ddd/';
+        //     }, 10);
+        // }
     },
     mounted() {
         this.initWs();

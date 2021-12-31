@@ -111,6 +111,19 @@ export default {
         getCode() {
             // console.log('创建房间号并获取房间二维码');
             // this.$router.push('/playerJoin')
+
+            this.$confirm(`注意，您确定要开启新房间？之前的房间信息都将丢失，请慎重创建新房间`, '提示', {
+                confirmButtonText: '确定创建',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.createRoom();
+            }).catch(() => {
+                
+            });
+            
+        },
+        createRoom() {
             // 创建房间并获取房间号
             axios.post(
                 process.env.VUE_APP_BASE_URL+ 'room/',
