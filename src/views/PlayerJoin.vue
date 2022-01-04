@@ -39,12 +39,12 @@ export default {
             let data = this.roomInfo.joined.concat();
             var index = data.indexOf('admin');
             if (index > -1) {
-                data.splice(index, 1); 
+                data.splice(index, 1);
             }
             return data;
         },
         noJoined() {
-            let arr = [ '觉觉', '飒飒', '霸霸', '玛玛', '臭臭', '蒂蒂', '野也', '帅帅', '宝宝'];
+            let arr = ['帅帅', '宝宝', '玛玛', '觉觉', '臭臭', '霸霸', '野野', '蒂蒂', '莎莎'];
             return arr.filter(item => this.joined.indexOf(item) == -1);
         }
     },

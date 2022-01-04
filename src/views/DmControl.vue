@@ -162,7 +162,7 @@ export default {
         return {
             value: false,
             tabIndex: 1,
-            role: '觉觉', // 角色
+            role: '帅帅', // 角色
             amount: '', // 数量
             price: '',
             currentPrice: '',
@@ -176,40 +176,40 @@ export default {
             ],
             roleOptions: [
                 {
-                    value: '觉觉',
-                    label: '觉觉'
+                    value: '帅帅',
+                    label: '帅帅'
                 }, 
                 {
-                    value: '飒飒',
-                    label: '飒飒'
-                }, 
-                {
-                    value: '霸霸',
-                    label: '霸霸'
+                    value: '宝宝',
+                    label: '宝宝'
                 }, 
                 {
                     value: '玛玛',
                     label: '玛玛'
                 }, 
                 {
+                    value: '觉觉',
+                    label: '觉觉'
+                }, 
+                {
                     value: '臭臭',
                     label: '臭臭'
+                },
+                {
+                    value: '霸霸',
+                    label: "霸霸"
+                },
+                {
+                    value: '野野',
+                    label: "野野"
                 },
                 {
                     value: '蒂蒂',
                     label: "蒂蒂"
                 },
                 {
-                    value: '野也',
-                    label: "野也"
-                },
-                {
-                    value: '帅帅',
-                    label: "帅帅"
-                },
-                {
-                    value: '宝宝',
-                    label: "宝宝"
+                    value: '莎莎',
+                    label: "莎莎"
                 }
             ]
         }
@@ -393,7 +393,10 @@ export default {
             }
             if (e.data_type === 'all_user_info') {
                 if(e.success) {
-                    this.userRank = e.data;
+                    let list = e.data;
+                    this.userRank = list.filter(item => {
+                        return item.role != 'admin';
+                    });
                 }
             }
             if (e.data_type === 'check_token') {

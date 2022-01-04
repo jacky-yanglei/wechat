@@ -5,7 +5,8 @@
             <div><span>价格：</span><span>{{ showPrice }}</span></div>
         </div>
         <div class="btns">
-            <div class="rank-btn" @click="openRank()">排行榜</div>
+            <!-- <div class="rank-btn" @click="openRank()">排行榜</div> -->
+            <div></div>
             <div class="exit-room" @click="exitRoom()">退出房间</div>
         </div>
         <div class="chart" ref="chart">
@@ -371,7 +372,10 @@ export default {
             }
             if (e.data_type === 'all_user_info') {
                 if(e.success) {
-                    this.userRank = e.data;
+                    let list = e.data;
+                    this.userRank = list.filter(item => {
+                        return item.role != 'admin';
+                    });
                 }
             }
             if (e.data_type === 'check_token') {

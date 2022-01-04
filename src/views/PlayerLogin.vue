@@ -53,40 +53,40 @@ export default {
             playerInfo: {},
             roleOptions: [
                 {
-                    value: '觉觉',
-                    label: '觉觉'
+                    value: '帅帅',
+                    label: '帅帅'
                 }, 
                 {
-                    value: '飒飒',
-                    label: '飒飒'
-                }, 
-                {
-                    value: '霸霸',
-                    label: '霸霸'
+                    value: '宝宝',
+                    label: '宝宝'
                 }, 
                 {
                     value: '玛玛',
                     label: '玛玛'
                 }, 
                 {
+                    value: '觉觉',
+                    label: '觉觉'
+                }, 
+                {
                     value: '臭臭',
                     label: '臭臭'
+                },
+                {
+                    value: '霸霸',
+                    label: "霸霸"
+                },
+                {
+                    value: '野野',
+                    label: "野野"
                 },
                 {
                     value: '蒂蒂',
                     label: "蒂蒂"
                 },
                 {
-                    value: '野也',
-                    label: "野也"
-                },
-                {
-                    value: '帅帅',
-                    label: "帅帅"
-                },
-                {
-                    value: '宝宝',
-                    label: "宝宝"
+                    value: '莎莎',
+                    label: "莎莎"
                 }
             ],
         }
