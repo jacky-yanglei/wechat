@@ -123,6 +123,26 @@ export default {
     },
     methods: {
         todo() {
+            // let winner = this.goods(2);
+            // this.lottery(this.$refs.lottery,
+            // {
+            //     winner: winner, // 中奖项 必传
+            //     price: this.price, // 奖品列表 非必传
+            //     callback: (index) => {
+            //         this.$alert(`${ this.price[index-1] == '代金券'?`<div>半箱洽洽瓜子</div><div>英明神武的特工，您是否要将剩下半袋带回家？</div>`:`<div>${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>` }`, '恭喜您', {
+            //             dangerouslyUseHTMLString: true,
+            //             confirmButtonText: '去领奖',
+            //             showClose: false,
+            //             callback: () => {
+            //                 if (winner == 1 || winner == 11) {
+            //                     location.href = 'https://s.vchangyi.com/sJM';
+            //                 } else {
+            //                     this.$router.push('/setAddress/' + this.$route.params.phone);
+            //                 }
+            //             }
+            //         });
+            //     } // 抽奖转完之后的回调方法
+            // });
             axios.put(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/draw/`).then(({data}) => {
                 if (data.status === 200) {
                     let winner = this.goods(data.data.id);
@@ -131,7 +151,9 @@ export default {
                         winner: winner, // 中奖项 必传
                         price: this.price, // 奖品列表 非必传
                         callback: (index) => {
-                            this.$alert(`抽中 ${ this.price[index-1] }`, '恭喜您', {
+                            this.$alert(`${ this.price[index-1] == '代金券'?`<div>半箱洽洽瓜子</div><div>英明神武的特工，您是否要将剩下半袋带回家？</div>`:`<div>${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>` }`, '恭喜您', {
+                                dangerouslyUseHTMLString: true,
+                                showClose: false,
                                 confirmButtonText: '去领奖',
                                 callback: () => {
                                     if (winner == 1 || winner == 11) {

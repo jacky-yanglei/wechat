@@ -2,6 +2,12 @@
     <div class="page">
         <div class="title"><img src="../assets/exchange/title.png" alt=""></div>
         <div class="content">
+            <div class="check_phone">
+                <img src="../assets/exchange/check_phone_text.png" alt="">
+            </div>
+            <div class="check_phone">
+                <img src="../assets/exchange/check_phone.png" alt="">
+            </div>
             <div class="header">
                 <img src="../assets/exchange/top-pip.png" alt="">
             </div>
@@ -14,6 +20,20 @@
                     </div>
                     <div class="error-text" v-if="postStatus && !phone">手机号不能为空</div>
                 </div>
+                <div>
+                    <div>角色</div>
+                    <div>
+                        <el-input v-model="name"></el-input>
+                    </div>
+                    <div class="error-text" v-if="postStatus && !name">角色不能为空</div>
+                </div>
+                <div>
+                    <div>您赚到了多少金嗑啦？</div>
+                    <div>
+                        <el-input type="number" v-model="count"></el-input>
+                    </div>
+                    <div class="error-text" v-if="postStatus && !count">金嗑啦不能为空</div>
+                </div>
                 <div class="btn">
                     <img @click="post()" src="../assets/exchange/confirm-btn.png" alt="">
                 </div>
@@ -21,20 +41,7 @@
             <div class="footer">
                 <img src="../assets/exchange/bottom-pip.png" alt="">
             </div>
-            <div class="tips">
-                <!-- <div>淘“金”盲盒抽奖活动</div>
-                <div>iPhone手机、洽洽真金瓜子&吨吨手办盲盒、手办盲盒、洽洽瓜子盲盒大礼包、洽洽瓜子礼包专属5折优惠福利。</div>
-                <div>哪一个将是你带回去的宝藏呢！百分百中奖！！</div>
-                <div>活动期至2022年2月28日，宝藏有限，抽完即止。</div>
-                <div>活动解释权归壹直爽发行所有。</div>
-                <div>-----------------------------</div>
-                <div>#有奖话题#</div>
-                <div>小红书or微博发布 玩吨2+嗑瓜子的场景</div>
-                <div>关注 洽洽 并@洽洽 带话题#剧本杀，嗑洽洽</div>
-                <div>（微博：洽洽坚果；小红书：洽洽）</div>
-                <div>就有机会获得由洽洽瓜子提供的</div>
-                <div>“拍立得&9口味洽洽瓜子大礼包”</div>
-                <div>“大肚杯&9口味洽洽瓜子大礼包”</div> -->
+            <!-- <div class="tips">
                 <div>参与“吨2”即可获得【洽洽瓜子淘金大礼包专属5折优惠福利】</div>
                 <div>-----------------------------</div>
                 <div>淘“金”盲盒抽奖活动</div>
@@ -46,7 +53,7 @@
                 <div>小红书or微博发布【玩吨2+嗑瓜子】的场景</div>
                 <div>关注 洽洽 并@洽洽 带话题#剧本杀，嗑洽洽（微博：洽洽坚果；小红书：洽洽）</div>
                 <div>就有机会获得由洽洽瓜子提供的“拍立得&9口味洽洽瓜子大礼包”“大肚杯&9口味洽洽瓜子大礼包”</div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -57,17 +64,20 @@ export default {
     data() {
         return {
             phone: '',
+            name: '',
+            count: '',
             postStatus: false
         }
     },
     methods: {
         post() {
             this.postStatus = true;
-            if(this.phone) {
+            if(this.phone && this.name && this.count) {
                 axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.phone}/check/`).then(({data}) => {
+                    console.log(data);
                     if (data.status === 200) {
                         if (!data.data.played) {
-                            this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖/领券', '提示', {
+                            this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
                                 showClose: false,
@@ -75,25 +85,12 @@ export default {
                                 }
                             });
                             return;
-                        }
-                        if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
-                            this.$router.push('/lottery/' + this.phone)
-                            return;
-                        }
-                        if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
-                            location.href = 'https://s.vchangyi.com/sJM';
-                            return;
-                        }
-                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
+                        } else if(data.data.played && !data.data.goods) {
+                            this.$router.push('/lottery/' + this.phone);
+                        } else if(data.data.played && data.data.goods && !data.data.is_sub_address) {
                             this.$router.push('/setAddress/' + this.phone)
-                            return;
-                        }
-                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
-                            location.href = 'https://s.vchangyi.com/sJM';
-                            return;
-                        }
-                        if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
-                            this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
+                        } else if(data.data.played && data.data.goods && data.data.is_sub_address) {
+                            this.$alert('对不起，您已抽过奖，不可重复', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
                                 showClose: false,
@@ -101,6 +98,31 @@ export default {
                                 }
                             });
                         }
+                        // if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
+                        //     this.$router.push('/lottery/' + this.phone)
+                        //     return;
+                        // }
+                        // if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
+                        //     location.href = 'https://s.vchangyi.com/sJM';
+                        //     return;
+                        // }
+                        // if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
+                        //     this.$router.push('/setAddress/' + this.phone)
+                        //     return;
+                        // }
+                        // if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
+                        //     location.href = 'https://s.vchangyi.com/sJM';
+                        //     return;
+                        // }
+                        // if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
+                        //     this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
+                        //         confirmButtonText: '确定',
+                        //         type: 'error',
+                        //         showClose: false,
+                        //         callback: () => {
+                        //         }
+                        //     });
+                        // }
                     }
                 })
             }
@@ -145,6 +167,13 @@ export default {
         }
         .footer {
             margin: 0 -15px;
+        }
+        .check_phone {
+            text-align: center;
+            margin-bottom: 10px;
+            img {
+                width: auto;
+            }
         }
         .print {
             background-color: #CCB480;

@@ -66,15 +66,24 @@ export default {
                 address_details: this.address,
             }).then(({data}) => {
                 if (data.status == 200) {
-                    this.$alert('提交成功，等待礼品送达吧！此外您还可以再额外领一次恰恰瓜子代金券！', '提示', {
-                        confirmButtonText: '去领券',
+                    this.$alert('提交成功，等待礼品送达吧!', '提示', {
+                        confirmButtonText: '确定',
+                        showClose: false,
                         callback:() => {
                             this.setSuccess = true;
-                            axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/check/`).then(({data}) => {
-                                if (data.status === 200) {
-                                    location.href = 'https://s.vchangyi.com/sJM';
-                                }
-                            })
+                            // axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.$route.params.phone}/check/`).then(({data}) => {
+                            //     if (data.status === 200) {
+                            //         location.href = 'https://s.vchangyi.com/sJM';
+                            //     }
+                            // })
+                        }
+                    });
+                } else {
+                    this.$alert(data.message, '提示', {
+                        confirmButtonText: '确定',
+                        type: 'error',
+                        showClose: false,
+                        callback: () => {
                         }
                     });
                 }
