@@ -23,14 +23,29 @@
                 <div>
                     <div>角色</div>
                     <div>
-                        <el-input v-model="name"></el-input>
+                        <!-- <el-input v-model="name"></el-input> -->
+                        <div>
+                            <el-select v-model="name" placeholder="请选择">
+                                <el-option
+                                v-for="item in roleOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
                     </div>
                     <div class="error-text" v-if="postStatus && !name">角色不能为空</div>
                 </div>
                 <div>
                     <div>您赚到了多少金嗑啦？</div>
                     <div>
-                        <el-input type="number" v-model="count"></el-input>
+                        <!-- <el-input type="number" v-model="count"></el-input> -->
+                        <div class="input-group">
+                            <el-input type="number" v-model="count">
+                            </el-input>
+                            <i class="after">万</i>
+                        </div>
                     </div>
                     <div class="error-text" v-if="postStatus && !count">金嗑啦不能为空</div>
                 </div>
@@ -66,7 +81,45 @@ export default {
             phone: '',
             name: '',
             count: '',
-            postStatus: false
+            postStatus: false,
+            roleOptions: [
+                {
+                    value: '帅帅',
+                    label: '帅帅'
+                }, 
+                {
+                    value: '宝宝',
+                    label: '宝宝'
+                }, 
+                {
+                    value: '玛玛',
+                    label: '玛玛'
+                }, 
+                {
+                    value: '觉觉',
+                    label: '觉觉'
+                }, 
+                {
+                    value: '臭臭',
+                    label: '臭臭'
+                },
+                {
+                    value: '霸霸',
+                    label: "霸霸"
+                },
+                {
+                    value: '野野',
+                    label: "野野"
+                },
+                {
+                    value: '蒂蒂',
+                    label: "蒂蒂"
+                },
+                {
+                    value: '莎莎',
+                    label: "莎莎"
+                }
+            ],
         }
     },
     methods: {
@@ -201,6 +254,15 @@ export default {
         margin-top: 20px;
         color: white;
         font-size: 14px;
+    }
+    .input-group {
+        position: relative;
+        .after {
+            position: absolute;
+            right: 15px;
+            top: 8px;
+            color: white;
+        }
     }
 }
 </style>
