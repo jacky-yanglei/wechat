@@ -74,10 +74,59 @@ export default {
             this.postStatus = true;
             if(this.phone && this.name && this.count) {
                 axios.get(process.env.VUE_APP_BASE_URL + `mvp/mvp/${this.phone}/check/`).then(({data}) => {
-                    console.log(data);
+                    // console.log(data);
+                    // if (data.status === 200) {
+                    //     if (!data.data.played) {
+                    //         this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖', '提示', {
+                    //             confirmButtonText: '确定',
+                    //             type: 'error',
+                    //             showClose: false,
+                    //             callback: () => {
+                    //             }
+                    //         });
+                    //         return;
+                    //     } else if(data.data.played && !data.data.goods) {
+                    //         this.$router.push('/lottery/' + this.phone);
+                    //     } else if(data.data.played && data.data.goods && !data.data.is_sub_address) {
+                    //         this.$router.push('/setAddress/' + this.phone)
+                    //     } else if(data.data.played && data.data.goods && data.data.is_sub_address) {
+                    //         this.$alert('对不起，您已抽过奖，不可重复', '提示', {
+                    //             confirmButtonText: '确定',
+                    //             type: 'error',
+                    //             showClose: false,
+                    //             callback: () => {
+                    //             }
+                    //         });
+                    //     }
+                    //     // if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
+                    //     //     this.$router.push('/lottery/' + this.phone)
+                    //     //     return;
+                    //     // }
+                    //     // if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
+                    //     //     location.href = 'https://s.vchangyi.com/sJM';
+                    //     //     return;
+                    //     // }
+                    //     // if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
+                    //     //     this.$router.push('/setAddress/' + this.phone)
+                    //     //     return;
+                    //     // }
+                    //     // if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
+                    //     //     location.href = 'https://s.vchangyi.com/sJM';
+                    //     //     return;
+                    //     // }
+                    //     // if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
+                    //     //     this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
+                    //     //         confirmButtonText: '确定',
+                    //     //         type: 'error',
+                    //     //         showClose: false,
+                    //     //         callback: () => {
+                    //     //         }
+                    //     //     });
+                    //     // }
+                    // }
                     if (data.status === 200) {
                         if (!data.data.played) {
-                            this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖', '提示', {
+                            this.$alert('对不起，你还未玩过吨吨吨2，不能参与抽奖/领券', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
                                 showClose: false,
@@ -85,12 +134,25 @@ export default {
                                 }
                             });
                             return;
-                        } else if(data.data.played && !data.data.goods) {
-                            this.$router.push('/lottery/' + this.phone);
-                        } else if(data.data.played && data.data.goods && !data.data.is_sub_address) {
+                        }
+                        if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
+                            this.$router.push('/lottery/' + this.phone)
+                            return;
+                        }
+                        if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
+                            location.href = 'https://s.vchangyi.com/sJM';
+                            return;
+                        }
+                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
                             this.$router.push('/setAddress/' + this.phone)
-                        } else if(data.data.played && data.data.goods && data.data.is_sub_address) {
-                            this.$alert('对不起，您已抽过奖，不可重复', '提示', {
+                            return;
+                        }
+                        if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
+                            location.href = 'https://s.vchangyi.com/sJM';
+                            return;
+                        }
+                        if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
+                            this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
                                 confirmButtonText: '确定',
                                 type: 'error',
                                 showClose: false,
@@ -98,31 +160,6 @@ export default {
                                 }
                             });
                         }
-                        // if(data.data.played&&data.data.is_mvp&&!data.data.goods) {
-                        //     this.$router.push('/lottery/' + this.phone)
-                        //     return;
-                        // }
-                        // if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
-                        //     location.href = 'https://s.vchangyi.com/sJM';
-                        //     return;
-                        // }
-                        // if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
-                        //     this.$router.push('/setAddress/' + this.phone)
-                        //     return;
-                        // }
-                        // if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
-                        //     location.href = 'https://s.vchangyi.com/sJM';
-                        //     return;
-                        // }
-                        // if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {
-                        //     this.$alert('对不起，您已抽过奖或领过券，不可重复', '提示', {
-                        //         confirmButtonText: '确定',
-                        //         type: 'error',
-                        //         showClose: false,
-                        //         callback: () => {
-                        //         }
-                        //     });
-                        // }
                     }
                 })
             }
