@@ -38,9 +38,9 @@ export default {
             tokenStatusLoading: false,
             appJiang: null,
             jiangList: [
-                'https://s.vchangyi.com/sJz',
-                'https://s.vchangyi.com/sJE',
-                'https://s.vchangyi.com/sJp'
+                'https://s.vchangyi.com/s25',
+                'https://s.vchangyi.com/s2I',
+                'https://s.vchangyi.com/s2d'
             ],
             roomId: null,
         }

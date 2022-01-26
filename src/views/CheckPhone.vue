@@ -193,7 +193,7 @@ export default {
                             return;
                         }
                         if(data.data.played&&!data.data.is_mvp&&!data.data.get_ticket) {
-                            location.href = 'https://s.vchangyi.com/sJM';
+                            location.href = 'https://s.vchangyi.com/s2X';
                             return;
                         }
                         if (data.data.played&&data.data.is_mvp&&data.data.goods&&!data.data.is_sub_address) {
@@ -201,7 +201,7 @@ export default {
                             return;
                         }
                         if (data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&!data.data.get_ticket) {
-                            location.href = 'https://s.vchangyi.com/sJM';
+                            location.href = 'https://s.vchangyi.com/s2X';
                             return;
                         }
                         if ((data.data.played&&data.data.is_mvp&&data.data.goods&&data.data.is_sub_address&&data.data.get_ticket) || (data.data.played&&!data.data.is_mvp&&data.data.get_ticket)) {

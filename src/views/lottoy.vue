@@ -157,7 +157,7 @@ export default {
                                 confirmButtonText: '去领奖',
                                 callback: () => {
                                     if (winner == 1 || winner == 11) {
-                                        location.href = 'https://s.vchangyi.com/sJM';
+                                        location.href = 'https://s.vchangyi.com/s2J';
                                     } else {
                                         this.$router.push('/setAddress/' + this.$route.params.phone);
                                     }
