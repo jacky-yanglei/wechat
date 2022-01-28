@@ -151,7 +151,7 @@ export default {
                         winner: winner, // 中奖项 必传
                         price: this.price, // 奖品列表 非必传
                         callback: (index) => {
-                            this.$alert(`${ this.price[index-1] == '代金券'?`<div>半箱洽洽瓜子</div><div>英明神武的特工，您是否要将剩下半袋带回家？</div>`:`<div>${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>` }`, '恭喜您', {
+                            this.$alert(`${ this.price[index-1] == '代金券'?`<div>金磕啦生成了洽洽瓜子盲盒</div><div>英勇神武的特工们，您是否要将它带回家！</div>`:`<div>${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>` }`, '恭喜您', {
                                 dangerouslyUseHTMLString: true,
                                 showClose: false,
                                 confirmButtonText: '去领奖',
