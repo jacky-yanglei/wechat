@@ -151,18 +151,35 @@ export default {
                         winner: winner, // 中奖项 必传
                         price: this.price, // 奖品列表 非必传
                         callback: (index) => {
-                            this.$alert(`${ this.price[index-1] == '代金券'?`<div>金磕啦生成了洽洽瓜子盲盒</div><div>英勇神武的特工们，您是否要将它带回家！</div>`:`<div>${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>` }`, '恭喜您', {
-                                dangerouslyUseHTMLString: true,
-                                showClose: false,
-                                confirmButtonText: '去领奖',
-                                callback: () => {
-                                    if (winner == 1 || winner == 11) {
+                            if (this.price[index-1] == '代金券') {
+                                this.$alert(`<div>金磕啦生成了代金券</div><div>英勇神武的特工们，您是否要将它带回家！</div>`, '恭喜您', {
+                                    dangerouslyUseHTMLString: true,
+                                    showClose: false,
+                                    confirmButtonText: '去领奖',
+                                    callback: () => {
+                                        location.href = 'https://s.vchangyi.com/s2X';
+                                    }
+                                });
+                            } else if (this.price[index-1] == '瓜子盲盒') {
+                                this.$alert(`<div>金磕啦生成了洽洽瓜子盲盒</div><div>英勇神武的特工们，您是否要将它带回家！</div>`, '恭喜您', {
+                                    dangerouslyUseHTMLString: true,
+                                    showClose: false,
+                                    confirmButtonText: '去领奖',
+                                    callback: () => {
                                         location.href = 'https://s.vchangyi.com/s2J';
-                                    } else {
+                                    }
+                                });
+                            } else {
+                                this.$alert(`<div>金磕啦生成了${this.price[index-1]}</div><div>英明神武的特工，您值得所有的爱与美好。</div>`, '恭喜您', {
+                                    dangerouslyUseHTMLString: true,
+                                    showClose: false,
+                                    confirmButtonText: '去领奖',
+                                    callback: () => {
                                         this.$router.push('/setAddress/' + this.$route.params.phone);
                                     }
-                                }
-                            });
+                                });
+                            }
+                            
                         } // 抽奖转完之后的回调方法
                     });
                 } else {
