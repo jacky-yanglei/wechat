@@ -152,7 +152,7 @@ export default {
                         price: this.price, // 奖品列表 非必传
                         callback: (index) => {
                             if (this.price[index-1] == '代金券') {
-                                this.$alert(`<div>金磕啦生成了代金券</div><div>英勇神武的特工们，您是否要将它带回家！</div>`, '恭喜您', {
+                                this.$alert(`<div>金磕啦生成了半箱洽洽瓜子</div><div>英明神武的特工，您是否要将剩下半袋带回家？</div>`, '恭喜您', {
                                     dangerouslyUseHTMLString: true,
                                     showClose: false,
                                     confirmButtonText: '去领奖',
@@ -161,7 +161,7 @@ export default {
                                     }
                                 });
                             } else if (this.price[index-1] == '瓜子盲盒') {
-                                this.$alert(`<div>金磕啦生成了洽洽瓜子盲盒</div><div>英勇神武的特工们，您是否要将它带回家！</div>`, '恭喜您', {
+                                this.$alert(`<div>金磕啦生成了洽洽瓜子盲盒</div><div>英勇神武的特工，您是否要将它带回家！</div>`, '恭喜您', {
                                     dangerouslyUseHTMLString: true,
                                     showClose: false,
                                     confirmButtonText: '去领奖',
